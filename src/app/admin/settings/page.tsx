@@ -193,7 +193,7 @@ export default function AdminSettings() {
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Putalisadak, Kathmandu (Opposite to Star Mall), Nepal"
+                    placeholder="e.g. Boudha-6, Pipalbot, Kathmandu, Nepal"
                     value={settings.contact_address}
                     onChange={(e) => handleInputChange("contact_address", e.target.value)}
                     className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none"

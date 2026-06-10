@@ -1,8 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
-import { Mail, Phone, MapPin, MessageCircle, Plane } from "lucide-react";
-import { Facebook, Instagram, Linkedin } from "@/components/ui/BrandIcons";
+import { Mail, Phone, MapPin, Plane } from "lucide-react";
+import { Facebook, Instagram, Linkedin, WhatsApp } from "@/components/ui/BrandIcons";
 
 const footerLinks = {
   services: [
@@ -24,7 +24,7 @@ const socialLinks = [
   { href: "https://facebook.com/thevisaghar", icon: Facebook, label: "Facebook" },
   { href: "https://instagram.com/thevisaghar", icon: Instagram, label: "Instagram" },
   { href: "https://linkedin.com/company/thevisaghar", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://wa.me/9779851338645", icon: MessageCircle, label: "WhatsApp" },
+  { href: "https://wa.me/9779851338645", icon: WhatsApp, label: "WhatsApp" },
 ];
 
 export function Footer() {

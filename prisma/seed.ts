@@ -29,7 +29,7 @@ async function main() {
       shortDescription: "Study at top universities globally with our expert student visa guidance.",
       icon: "graduation-cap",
       price: "Contact Us",
-      documentsRequired: ["Valid passport", "Offer letter / CAS / I-20", "Financial evidence", "Language proficiency test (IELTS/PTE)", "Academic transcripts", "TB test results (if applicable)"],
+      documentsRequired: JSON.stringify(["Valid passport", "Offer letter / CAS / I-20", "Financial evidence", "Language proficiency test (IELTS/PTE)", "Academic transcripts", "TB test results (if applicable)"]),
       processingTime: "4-12 weeks",
       eligibility: "An unconditional/conditional offer letter from a recognized educational institution. Proof of financial capability to pay tuition fees and cover living costs. Meet language requirements of the destination.",
       faq: JSON.stringify([
@@ -45,7 +45,7 @@ async function main() {
       shortDescription: "Comprehensive Japanese language preparation classes for JLPT N5 & N4 levels.",
       icon: "languages",
       price: "Contact Us",
-      documentsRequired: ["Identification proof", "JLPT exam form (if registering)"],
+      documentsRequired: JSON.stringify(["Identification proof", "JLPT exam form (if registering)"]),
       processingTime: "8-12 weeks",
       eligibility: "Open to all students and professionals aiming to study or work in Japan.",
       faq: JSON.stringify([
@@ -61,7 +61,7 @@ async function main() {
       shortDescription: "Expert IELTS coaching with regular mock tests and mock speaking practice.",
       icon: "book-open",
       price: "Contact Us",
-      documentsRequired: ["Valid Passport", "Enrollment Form"],
+      documentsRequired: JSON.stringify(["Valid Passport", "Enrollment Form"]),
       processingTime: "4-8 weeks",
       eligibility: "Intermediate English level recommended.",
       faq: JSON.stringify([
@@ -77,7 +77,7 @@ async function main() {
       shortDescription: "Interactive PTE Academic coaching with computer lab simulations.",
       icon: "file-text",
       price: "Contact Us",
-      documentsRequired: ["Valid Passport", "Enrollment Form"],
+      documentsRequired: JSON.stringify(["Valid Passport", "Enrollment Form"]),
       processingTime: "4-8 weeks",
       eligibility: "Intermediate English level recommended.",
       faq: JSON.stringify([
@@ -93,7 +93,7 @@ async function main() {
       shortDescription: "Essential digital literacy and MS Office training for students and adults.",
       icon: "monitor",
       price: "Contact Us",
-      documentsRequired: ["Enrollment Form"],
+      documentsRequired: JSON.stringify(["Enrollment Form"]),
       processingTime: "4-6 weeks",
       eligibility: "Open to beginners of all ages.",
       faq: JSON.stringify([
@@ -113,26 +113,18 @@ async function main() {
   }
   console.log(`✅ ${services.length} services created`);
 
-  // Delete obsolete services if any exist
-  const slugsToKeep = services.map(s => s.slug);
-  await prisma.service.deleteMany({
-    where: {
-      slug: { notIn: slugsToKeep }
-    }
-  });
-
   // ─── Team Members ────────────────────────────────────────────────────────
   const teamMembers = [
     {
-      name: "Rajesh Sharma",
-      role: "Founder & Lead Consultant",
-      bio: "With over 12 years of experience in educational consultancy, Rajesh has helped thousands of Nepali students achieve their study abroad goals.",
+      name: "Counseling Team",
+      role: "Student Visa Experts",
+      bio: "Our dedicated counseling team specializes in student visa applications with a 98% success rate.",
       order: 1,
     },
     {
-      name: "Sunita Thapa",
-      role: "Senior Student Visa Counselor",
-      bio: "Sunita specializes in student visa counseling and maintains a 99% success rate for student admissions and visa applications.",
+      name: "Language Faculty",
+      role: "Japanese Language & Test Prep",
+      bio: "Experienced instructors for Japanese Language (JLPT N5/N4), IELTS, and PTE preparation classes.",
       order: 2,
     },
   ];
@@ -191,13 +183,11 @@ async function main() {
         content: [
           { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Master Japanese Language Proficiency" }] },
           { type: "paragraph", content: [{ type: "text", text: "To study or work in Japan, passing the JLPT N5 or N4 levels is a crucial first step. Our classes at The Visa Ghar are designed to equip you with the essential Hiragana, Katakana, Kanji, and grammar skills required." }] },
-          { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Study Strategies" }] },
-          { type: "paragraph", content: [{ type: "text", text: "Focus heavily on vocabulary memorization and particles. Practice listening to native audio daily and solve past question papers." }] },
         ],
       }),
       excerpt: "Comprehensive preparation guide for JLPT N5 and N4 Japanese language levels for students in Kathmandu.",
       category: "Japanese Language",
-      tags: ["Japan", "N5", "N4", "JLPT", "Guide"],
+      tags: JSON.stringify(["Japan", "N5", "N4", "JLPT", "Guide"]),
       seoTitle: "How to Prepare for the Japanese Language N5/N4 Test | The Visa Ghar",
       seoDescription: "Preparation strategies for Japanese language N5 and N4 tests. Get tips from Kathmandu's best instructors.",
       published: true,
@@ -212,12 +202,11 @@ async function main() {
         content: [
           { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Maximize Your Chances of Approval" }] },
           { type: "paragraph", content: [{ type: "text", text: "Getting your student visa requires careful planning and precise document curation. Here are the top 10 tips based on years of successful applications at The Visa Ghar." }] },
-          { type: "paragraph", content: [{ type: "text", text: "1. Start early — begin university applications 6 months ahead. 2. Meet financial evidence requirements precisely. 3. Prepare thoroughly for credibility interviews." }] },
         ],
       }),
       excerpt: "Expert tips from The Visa Ghar counseling team to help Nepali students get their student visa approved on the first attempt.",
       category: "Study Abroad",
-      tags: ["Student Visa", "Tips", "Study Abroad", "Kathmandu"],
+      tags: JSON.stringify(["Student Visa", "Tips", "Study Abroad", "Kathmandu"]),
       seoTitle: "10 Tips for Student Visa Success | The Visa Ghar",
       seoDescription: "Learn key strategies and documentation checklists for getting your student visa approved from Nepal.",
       published: true,
@@ -231,14 +220,12 @@ async function main() {
         type: "doc",
         content: [
           { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Choosing the Right English Test" }] },
-          { type: "paragraph", content: [{ type: "text", text: "Both IELTS and PTE are widely accepted for admissions and student visas globally. However, their formats and testing styles differ significantly. Learn which one fits your strengths." }] },
-          { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Differences at a Glance" }] },
-          { type: "paragraph", content: [{ type: "text", text: "IELTS features both paper-based and computer-based options with a human speaking interviewer. PTE is entirely computer-based with automated machine scoring. Choose PTE if you prefer computer-based exams and fast results." }] },
+          { type: "paragraph", content: [{ type: "text", text: "Both IELTS and PTE are widely accepted for admissions and student visas globally. However, their formats and testing styles differ significantly." }] },
         ],
       }),
       excerpt: "Compare IELTS and PTE test structures, scoring, difficulty, and acceptance to decide the best path for your study abroad dreams.",
       category: "Test Preparation",
-      tags: ["IELTS", "PTE", "English Test", "Coaching"],
+      tags: JSON.stringify(["IELTS", "PTE", "English Test", "Coaching"]),
       seoTitle: "IELTS vs. PTE: Which Test Should You Take? | The Visa Ghar",
       seoDescription: "Detailed comparison of IELTS and PTE Academic tests. Learn about formats, scoring, and acceptance.",
       published: true,
@@ -255,14 +242,6 @@ async function main() {
     });
   }
   console.log(`✅ ${blogPosts.length} blog posts created`);
-
-  // Delete obsolete blog posts if any exist
-  const postSlugsToKeep = blogPosts.map(p => p.slug);
-  await prisma.blogPost.deleteMany({
-    where: {
-      slug: { notIn: postSlugsToKeep }
-    }
-  });
 
   // ─── Site Settings ───────────────────────────────────────────────────────
   const settings = [
@@ -289,6 +268,10 @@ async function main() {
   console.log(`✅ ${settings.length} site settings created`);
 
   console.log("🎉 Seeding complete!");
+  console.log("");
+  console.log("📌 Admin Login Credentials:");
+  console.log("   Email:    admin@thevisaghar.com");
+  console.log("   Password: Admin123!");
 }
 
 main()
@@ -299,4 +282,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

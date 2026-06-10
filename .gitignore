@@ -43,3 +43,7 @@ next-env.d.ts
 # test artifacts
 /playwright-report/
 /test-results/
+
+# SQLite database
+prisma/dev.db
+prisma/dev.db-journal

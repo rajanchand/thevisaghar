@@ -73,13 +73,13 @@ const jsonLd = {
   description: "Expert visa and immigration consultancy based in Kathmandu, Nepal.",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Putalisadak",
+    streetAddress: "Boudha-6, Pipalbot",
     addressLocality: "Kathmandu",
     addressCountry: "NP",
   },
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: "+977-1-4567890",
+    telephone: "+977-1-4913776",
     contactType: "customer service",
     availableLanguage: ["English", "Nepali"],
   },
