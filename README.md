@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Visa Ghar (thevisaghar.com)
+
+A professional, production-ready Next.js visa and immigration consultancy platform targeting Nepali clients seeking UK, Schengen, and Australia visas.
+
+## Tech Stack
+- **Frontend**: Next.js 16 (App Router) + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui + Framer Motion
+- **Database**: PostgreSQL via Prisma ORM
+- **Authentication**: NextAuth.js (Credentials Provider + JWT + bcrypt)
+- **AI Chat Widget**: Vercel AI SDK + Claude (streaming via Claude Sonnet)
+- **Email Notifications**: Resend API
+- **CMS/Admin**: Custom Admin Panel for managing services, bookings, inquiries, team members, testimonials, and audit logs.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 20+
+- PostgreSQL database instance (or a Supabase connection string)
 
+### 1. Installation
+Clone the repository and install the dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install --legacy-peer-deps
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Configuration
+Create a `.env` file in the root directory based on the `.env.example` file:
+```bash
+cp .env.example .env
+```
+Ensure you update the following environment variables:
+- `DATABASE_URL`: Connection string to your PostgreSQL instance.
+- `NEXTAUTH_SECRET`: Random 32-character string.
+- `ANTHROPIC_API_KEY`: For the Claude AI Chat widget.
+- `RESEND_API_KEY`: For email triggers (contact/bookings).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Database Migration & Seeding
+Apply the Prisma schema migrations and seed initial catalog data (such as UK Student, Skilled Worker, Schengen visa profiles, and admin credentials):
+```bash
+# Generate Prisma Client
+npx prisma generate
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Run database migrations
+npx prisma migrate dev --name init
 
-## Learn More
+# Seed database catalog and default admin credentials
+# Default admin credentials:
+# Email: admin@thevisaghar.com
+# Password: Admin123!
+npx prisma db seed
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 4. Running Locally
+Start the local Next.js development server:
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the site. Navigate to `/admin/login` to access the administration panel.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Testing
 
-## Deploy on Vercel
+This codebase includes automated Jest unit/integration tests and Playwright E2E browser test setups.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Running Unit/Integration Tests
+Runs the Jest test suite:
+```bash
+npm run test
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Running Playwright E2E Tests
+Runs the Playwright E2E tests:
+```bash
+npx playwright install
+npm run test:e2e
+```
+
+---
+
+## CI/CD Pipeline
+A GitHub Actions workflow is configured in `.github/workflows/ci.yml` that automatically:
+1. Installs clean dependencies.
+2. Audits packages for vulnerabilities.
+3. Runs linters.
+4. Executes unit and integration test suites.
+5. Builds the production bundle to verify compilation.

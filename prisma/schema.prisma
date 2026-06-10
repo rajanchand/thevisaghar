@@ -1,0 +1,178 @@
+// Prisma Schema for The Visa Ghar
+// Database: PostgreSQL (Supabase)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Admin Users ──────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  role         Role       @default(ADMIN)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  blogPosts    BlogPost[]
+  auditLogs    AuditLog[]
+
+  @@map("users")
+}
+
+// ─── Services ─────────────────────────────────────────────────────────────────
+
+model Service {
+  id                 String   @id @default(cuid())
+  title              String
+  slug               String   @unique
+  description        String   @db.Text
+  shortDescription   String?  @db.VarChar(300)
+  icon               String   @default("briefcase")
+  price              String?
+  documentsRequired  String[] @default([])
+  processingTime     String?
+  eligibility        String?  @db.Text
+  faq                Json?    @default("[]")
+  order              Int      @default(0)
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("services")
+}
+
+// ─── Blog Posts ───────────────────────────────────────────────────────────────
+
+model BlogPost {
+  id             String   @id @default(cuid())
+  title          String
+  slug           String   @unique
+  content        Json
+  excerpt        String?  @db.VarChar(500)
+  featuredImage  String?
+  category       String   @default("General")
+  tags           String[] @default([])
+  seoTitle       String?
+  seoDescription String?  @db.VarChar(320)
+  ogImage        String?
+  published      Boolean  @default(false)
+  publishedAt    DateTime?
+  authorId       String
+  author         User     @relation(fields: [authorId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("blog_posts")
+}
+
+// ─── Contact Inquiries ────────────────────────────────────────────────────────
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  visaType  String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  isReplied Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("inquiries")
+}
+
+// ─── Consultation Bookings ────────────────────────────────────────────────────
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  name          String
+  email         String
+  phone         String
+  visaType      String
+  preferredDate DateTime
+  message       String?       @db.Text
+  status        BookingStatus @default(PENDING)
+  notes         String?       @db.Text
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("bookings")
+}
+
+// ─── Testimonials ─────────────────────────────────────────────────────────────
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  clientName  String
+  clientPhoto String?
+  visaType    String
+  rating      Int      @default(5)
+  content     String   @db.Text
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("testimonials")
+}
+
+// ─── Team Members ─────────────────────────────────────────────────────────────
+
+model TeamMember {
+  id       String  @id @default(cuid())
+  name     String
+  role     String
+  photo    String?
+  bio      String? @db.Text
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+
+  @@map("team_members")
+}
+
+// ─── Site Settings ────────────────────────────────────────────────────────────
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+// ─── Audit Log ────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

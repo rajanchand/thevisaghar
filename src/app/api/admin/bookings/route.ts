@@ -1,0 +1,26 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import prisma from "@/lib/db";
+
+// GET all bookings for administration
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const bookings = await prisma.booking.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(bookings);
+  } catch (error) {
+    console.error("[Admin Bookings GET Error]:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch bookings" },
+      { status: 500 }
+    );
+  }
+}
