@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -87,12 +88,12 @@ export default function BookPage() {
             <p className="text-gray-500 mb-8">
               We&apos;ll contact you at <strong>{watchedValues.email}</strong> to confirm the exact time.
             </p>
-            <a
+            <Link
               href="/"
               className="inline-flex items-center gap-2 bg-navy text-white font-semibold px-8 py-3 rounded-xl hover:bg-navy-light transition-colors"
             >
               Return to Home
-            </a>
+            </Link>
           </motion.div>
         </div>
       </section>

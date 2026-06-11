@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 
 interface TipTapEditorProps {
-  content: string | Record<string, any>;
+  content: string | { html?: string } | Record<string, unknown>;
   onChange: (content: string) => void;
   placeholder?: string;
 }
@@ -32,7 +32,7 @@ export function TipTapEditor({
   placeholder = "Write something amazing...",
 }: TipTapEditorProps) {
   // Convert content if it's JSON or string
-  const initialContent = typeof content === "object" ? content?.html || "" : content;
+  const initialContent = typeof content === "object" && content !== null ? (content as { html?: string })?.html || "" : (content as string);
 
   const editor = useEditor({
     extensions: [
@@ -68,7 +68,7 @@ export function TipTapEditor({
   useEffect(() => {
     if (editor && content) {
       const currentHTML = editor.getHTML();
-      const targetHTML = typeof content === "object" ? content?.html || "" : content;
+      const targetHTML = typeof content === "object" && content !== null ? (content as { html?: string })?.html || "" : (content as string);
       if (currentHTML !== targetHTML) {
         editor.commands.setContent(targetHTML);
       }

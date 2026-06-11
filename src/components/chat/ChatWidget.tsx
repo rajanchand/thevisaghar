@@ -2,9 +2,9 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useChat } from "@ai-sdk/react";
+import { useChat, type Message } from "@ai-sdk/react";
 import { TextStreamChatTransport } from "ai";
-import { Plane, X, Send, MessageCircle, Sparkles } from "lucide-react";
+import { X, Send, MessageCircle, Sparkles } from "lucide-react";
 
 const quickReplies = [
   "Student Visa",
@@ -19,7 +19,7 @@ export function ChatWidget() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState("");
 
-  const { messages, sendMessage, status, stop, error } = useChat({
+  const { messages, sendMessage, status, error } = useChat({
     transport: new TextStreamChatTransport({
       api: "/api/chat",
     }),
@@ -122,7 +122,7 @@ export function ChatWidget() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map((message: any) => (
+              {messages.map((message: Message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
@@ -135,9 +135,10 @@ export function ChatWidget() {
                     }`}
                   >
                     {message.parts && message.parts.length > 0
-                      ? message.parts.map((part: any, index: number) =>
-                          part.type === "text" ? <span key={index}>{part.text}</span> : null
-                        )
+                      ? message.parts.map((part, index: number) => {
+                          const p = part as { type: string; text?: string };
+                          return p.type === "text" ? <span key={index}>{p.text}</span> : null;
+                        })
                       : message.content}
                   </div>
                 </div>

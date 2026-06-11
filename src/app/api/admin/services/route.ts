@@ -6,7 +6,7 @@ import { serviceSchema } from "@/lib/validations";
 import { logAudit } from "@/lib/audit";
 
 // GET all services for administration
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -57,10 +57,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const { documentsRequired, faq, ...rest } = validatedData.data;
+
     const service = await prisma.service.create({
       data: {
-        ...validatedData.data,
-        faq: validatedData.data.faq ? validatedData.data.faq : [],
+        ...rest,
+        documentsRequired: JSON.stringify(documentsRequired),
+        faq: faq ? JSON.stringify(faq) : "[]",
       },
     });
 

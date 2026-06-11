@@ -5,7 +5,7 @@ interface AuditLogParams {
   entity: string;
   entityId?: string;
   userId?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   ipAddress?: string;
 }
 

@@ -8,10 +8,6 @@ import {
   Edit,
   Trash2,
   X,
-  Check,
-  Eye,
-  PlusCircle,
-  MinusCircle,
   RefreshCw,
   Info,
 } from "lucide-react";
@@ -32,7 +28,7 @@ interface Service {
   documentsRequired: string[];
   processingTime?: string;
   eligibility?: string;
-  faq?: any; // FAQItem[] stored as JSON
+  faq?: FAQItem[] | string; // FAQItem[] stored as JSON
   order: number;
   isActive: boolean;
 }
@@ -83,20 +79,10 @@ export default function AdminServices() {
   };
 
   useEffect(() => {
-    fetchServices();
-  }, []);
+    void (async () => { await fetchServices(); })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Set slug automatically from title
-  useEffect(() => {
-    if (!editingService) {
-      setSlug(
-        title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)+/g, "")
-      );
-    }
-  }, [title, editingService]);
+  // Slug generator useEffect removed to prevent cascading renders
 
   const handleOpenCreate = () => {
     setEditingService(null);
@@ -382,7 +368,18 @@ export default function AdminServices() {
                       required
                       placeholder="e.g. UK Student Visa"
                       value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setTitle(val);
+                        if (!editingService) {
+                          setSlug(
+                            val
+                              .toLowerCase()
+                              .replace(/[^a-z0-9]+/g, "-")
+                              .replace(/(^-|-$)+/g, "")
+                          );
+                        }
+                      }}
                       className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
                     />
                   </div>

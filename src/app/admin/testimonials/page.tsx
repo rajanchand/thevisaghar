@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import {
   Star,
   Plus,
@@ -61,8 +62,8 @@ export default function AdminTestimonials() {
   };
 
   useEffect(() => {
-    fetchTestimonials();
-  }, []);
+    void (async () => { await fetchTestimonials(); })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleOpenCreate = () => {
     setEditingTestimonial(null);
@@ -215,7 +216,7 @@ export default function AdminTestimonials() {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-navy/5 text-navy border rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                     {t.clientPhoto ? (
-                      <img src={t.clientPhoto} alt={t.clientName} className="w-full h-full object-cover" />
+                      <Image src={t.clientPhoto} alt={t.clientName} width={40} height={40} className="w-full h-full object-cover" />
                     ) : (
                       <span className="font-bold text-sm">{t.clientName.charAt(0)}</span>
                     )}

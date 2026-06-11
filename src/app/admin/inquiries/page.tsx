@@ -8,7 +8,6 @@ import {
   Mail,
   Phone,
   Clock,
-  CheckCircle,
   Eye,
   Trash2,
   Filter,
@@ -52,8 +51,8 @@ export default function AdminInquiries() {
   };
 
   useEffect(() => {
-    fetchInquiries();
-  }, []);
+    void (async () => { await fetchInquiries(); })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleToggleStatus = async (id: string, updates: { isRead?: boolean; isReplied?: boolean }) => {
     try {

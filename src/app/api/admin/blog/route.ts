@@ -6,7 +6,7 @@ import { blogPostSchema } from "@/lib/validations";
 import { logAudit } from "@/lib/audit";
 
 // GET all blog posts for administration
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -64,12 +64,16 @@ export async function POST(request: NextRequest) {
 
     const userId = session.user.id;
 
+    const { tags, content, published, ...rest } = validatedData.data;
+
     const post = await prisma.blogPost.create({
       data: {
-        ...validatedData.data,
-        content: validatedData.data.content || {},
+        ...rest,
+        content: content ? JSON.stringify(content) : "{}",
+        tags: JSON.stringify(tags),
         authorId: userId,
-        publishedAt: validatedData.data.published ? new Date() : null,
+        publishedAt: published ? new Date() : null,
+        published,
       },
     });
 

@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Award, Shield, Users, Clock, CheckCircle2 } from "lucide-react";
+import { Award, Shield, Users, Clock } from "lucide-react";
 import { getInitials } from "@/lib/utils";
 
 const teamMembers = [

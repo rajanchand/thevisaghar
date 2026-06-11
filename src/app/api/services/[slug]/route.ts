@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 import { MOCK_SERVICES } from "@/lib/mock-data";
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {

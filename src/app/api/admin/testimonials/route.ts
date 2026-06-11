@@ -6,7 +6,7 @@ import { testimonialSchema } from "@/lib/validations";
 import { logAudit } from "@/lib/audit";
 
 // GET all testimonials (approved and pending) for administration
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {

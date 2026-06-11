@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import {
   Users,
   Plus,
@@ -10,7 +11,6 @@ import {
   X,
   RefreshCw,
   Info,
-  UserCheck,
 } from "lucide-react";
 
 interface TeamMember {
@@ -58,8 +58,8 @@ export default function AdminTeam() {
   };
 
   useEffect(() => {
-    fetchTeam();
-  }, []);
+    void (async () => { await fetchTeam(); })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleOpenCreate = () => {
     setEditingMember(null);
@@ -183,7 +183,7 @@ export default function AdminTeam() {
               <div className="p-6 border-b border-gray-50 flex items-center gap-4">
                 <div className="w-14 h-14 bg-navy/5 text-navy border border-navy/10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                   {member.photo ? (
-                    <img src={member.photo} alt={member.name} className="w-full h-full object-cover" />
+                    <Image src={member.photo} alt={member.name} width={56} height={56} className="w-full h-full object-cover" />
                   ) : (
                     <span className="text-lg font-bold">{member.name.charAt(0)}</span>
                   )}

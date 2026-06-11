@@ -9,7 +9,6 @@ import {
   FileText,
   Briefcase,
   ArrowUpRight,
-  TrendingUp,
   RefreshCw,
 } from "lucide-react";
 
@@ -49,8 +48,8 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    void (async () => { await fetchDashboardData(); })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const statsCards = stats
     ? [

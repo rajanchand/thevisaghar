@@ -25,7 +25,7 @@ export default function CountriesPage() {
               Choose Your Future Path
             </h1>
             <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-              We guide you through the complete admission and student visa processes for the world's most sought-after academic hubs.
+              We guide you through the complete admission and student visa processes for the world&apos;s most sought-after academic hubs.
             </p>
           </motion.div>
         </div>

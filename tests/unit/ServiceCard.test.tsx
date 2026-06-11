@@ -3,16 +3,23 @@ import { render, screen } from "@testing-library/react";
 import { ServiceCard } from "@/components/ui/ServiceCard";
 
 // Mock framer-motion to prevent issues with Jest/JSDOM and filter out custom props
-jest.mock("framer-motion", () => ({
-  motion: {
-    div: React.forwardRef(({ children, whileHover, whileTap, whileInView, viewport, ...props }: any, ref) => (
-      <div ref={ref} {...props}>
-        {children}
-      </div>
-    )),
-  },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
-}));
+jest.mock("framer-motion", () => {
+  const MotionDiv = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & Record<string, unknown>>(
+    function MotionDiv({ children, ...props }, ref) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { whileHover, whileTap, whileInView, viewport, initial, animate, exit, transition, variants, ...domProps } = props;
+      return (
+        <div ref={ref} {...domProps}>
+          {children}
+        </div>
+      );
+    }
+  );
+  return {
+    motion: { div: MotionDiv },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  };
+});
 
 describe("ServiceCard Component", () => {
   const mockProps = {

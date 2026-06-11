@@ -16,7 +16,6 @@ import {
   XCircle,
   AlertCircle,
   RefreshCw,
-  FileText,
 } from "lucide-react";
 
 interface Booking {
@@ -63,8 +62,8 @@ export default function AdminBookings() {
   };
 
   useEffect(() => {
-    fetchBookings();
-  }, []);
+    void (async () => { await fetchBookings(); })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleOpenEdit = (booking: Booking) => {
     setSelectedBooking(booking);

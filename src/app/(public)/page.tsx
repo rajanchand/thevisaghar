@@ -72,7 +72,7 @@ export default async function HomePage() {
           publishedAt: p.publishedAt ?? new Date(),
         })) 
       : MOCK_BLOG_POSTS;
-  } catch (error) {
+  } catch (_error) {
     console.warn("Database offline during home page build, falling back to mock data.");
     services = MOCK_SERVICES;
     testimonials = MOCK_TESTIMONIALS;
@@ -122,7 +122,7 @@ export default async function HomePage() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-12">
-            {MOCK_COUNTRIES.map((country, index) => (
+            {MOCK_COUNTRIES.map((country) => (
               <div
                 key={country.name}
                 className="group relative bg-off-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 animate-fadeIn"

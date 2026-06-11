@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import { formatDate, truncate } from "@/lib/utils";
@@ -29,10 +30,13 @@ export function BlogCard({ title, slug, excerpt, featuredImage, category, publis
           {/* Image */}
           <div className="relative h-48 bg-gradient-to-br from-navy/10 to-navy/5 overflow-hidden">
             {featuredImage ? (
-              <img
+              <Image
                 src={featuredImage}
                 alt={title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                unoptimized
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-navy to-navy-light flex items-center justify-center">

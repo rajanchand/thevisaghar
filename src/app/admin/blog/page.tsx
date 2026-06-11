@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import {
   FileText,
   Plus,
@@ -28,7 +29,7 @@ interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  content: any; // HTML string stored as Json { html: string }
+  content: unknown; // HTML string stored as Json { html: string }
   excerpt?: string;
   featuredImage?: string;
   category: string;
@@ -84,20 +85,10 @@ export default function AdminBlog() {
   };
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    void (async () => { await fetchPosts(); })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Slug generator from title
-  useEffect(() => {
-    if (!editingPost) {
-      setSlug(
-        title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)+/g, "")
-      );
-    }
-  }, [title, editingPost]);
+  // Slug generator useEffect removed in favor of handleTitleChange during render / onChange to prevent cascading renders
 
   const handleOpenCreate = () => {
     setEditingPost(null);
@@ -122,7 +113,7 @@ export default function AdminBlog() {
     setExcerpt(post.excerpt || "");
     
     // Support content format of either raw string or nested { html: "..." }
-    const htmlContent = typeof post.content === "object" ? post.content?.html || "" : post.content;
+    const htmlContent = typeof post.content === "object" && post.content !== null ? (post.content as { html?: string }).html || "" : (post.content as string) || "";
     setContentHtml(htmlContent);
     
     setFeaturedImage(post.featuredImage || "/images/blog-placeholder.jpg");
@@ -302,9 +293,11 @@ export default function AdminBlog() {
                     <td className="p-4 px-6 max-w-sm">
                       <div className="flex gap-3">
                         {post.featuredImage && (
-                          <img
+                          <Image
                             src={post.featuredImage}
                             alt=""
+                            width={64}
+                            height={40}
                             className="w-16 h-10 object-cover rounded-lg border border-gray-100 flex-shrink-0"
                           />
                         )}
@@ -423,7 +416,18 @@ export default function AdminBlog() {
                       required
                       placeholder="e.g. Complete Guide to Schengen Visa from Nepal"
                       value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setTitle(val);
+                        if (!editingPost) {
+                          setSlug(
+                            val
+                              .toLowerCase()
+                              .replace(/[^a-z0-9]+/g, "-")
+                              .replace(/(^-|-$)+/g, "")
+                          );
+                        }
+                      }}
                       className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy/20"
                     />
                   </div>

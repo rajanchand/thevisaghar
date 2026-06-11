@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { SiteSetting } from "@prisma/client";
 import { logAudit } from "@/lib/audit";
 
 // GET all site settings as key-value pairs
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
     const settings = await prisma.siteSetting.findMany();
     
     // Map array into a convenient dictionary format: { [key]: value }
-    const settingsMap = settings.reduce((acc: Record<string, string>, current: any) => {
+    const settingsMap = settings.reduce((acc: Record<string, string>, current: SiteSetting) => {
       acc[current.key] = current.value;
       return acc;
     }, {} as Record<string, string>);

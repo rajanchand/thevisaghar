@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { Inquiry } from "@prisma/client";
 
 // Helper to escape CSV values
-function escapeCSV(val: any) {
+function escapeCSV(val: unknown) {
   if (val === null || val === undefined) return "";
   let str = String(val);
   str = str.replace(/"/g, '""');
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
     if (isExport) {
       // Generate CSV
       const headers = ["ID", "Name", "Email", "Phone", "Visa Type", "Message", "Read", "Replied", "Created At"];
-      const rows = inquiries.map((inq: any) => [
+      const rows = inquiries.map((inq: Inquiry) => [
         inq.id,
         inq.name,
         inq.email,
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
 
       const csvContent = [
         headers.join(","),
-        ...rows.map((row: any[]) => row.map(escapeCSV).join(",")),
+        ...rows.map((row: unknown[]) => row.map(escapeCSV).join(",")),
       ].join("\n");
 
       return new NextResponse(csvContent, {

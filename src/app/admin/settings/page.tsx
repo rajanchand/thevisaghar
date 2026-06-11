@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+
 import {
   Settings,
   Mail,
@@ -62,8 +62,8 @@ export default function AdminSettings() {
   };
 
   useEffect(() => {
-    fetchSettings();
-  }, []);
+    void (async () => { await fetchSettings(); })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleInputChange = (key: string, value: string) => {
     setSettings((prev) => ({

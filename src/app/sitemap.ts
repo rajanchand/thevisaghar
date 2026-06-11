@@ -13,13 +13,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic blog post routes
-  let blogRoutes: any[] = [];
+  let blogRoutes: MetadataRoute.Sitemap = [];
   try {
     const posts = await prisma.blogPost.findMany({
       where: { published: true },
       select: { slug: true, updatedAt: true },
     });
-    blogRoutes = posts.map((post: any) => ({
+    blogRoutes = posts.map((post) => ({
       url: `${baseUrl}/blog/${post.slug}`,
       lastModified: post.updatedAt,
       changeFrequency: "monthly" as const,
@@ -30,13 +30,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Dynamic service routes
-  let serviceRoutes: any[] = [];
+  let serviceRoutes: MetadataRoute.Sitemap = [];
   try {
     const services = await prisma.service.findMany({
       where: { isActive: true },
       select: { slug: true, updatedAt: true },
     });
-    serviceRoutes = services.map((service: any) => ({
+    serviceRoutes = services.map((service) => ({
       url: `${baseUrl}/services/${service.slug}`,
       lastModified: service.updatedAt,
       changeFrequency: "monthly" as const,

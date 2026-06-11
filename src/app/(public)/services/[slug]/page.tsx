@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  ArrowRight,
   CheckCircle2,
   Clock,
   FileText,
@@ -29,7 +28,7 @@ interface Service {
   processingTime?: string;
   eligibility?: string;
   documentsRequired: string[];
-  faq?: any; // FAQItem[] stored as JSON
+  faq?: FAQItem[]; // FAQItem[] stored as JSON
 }
 
 function FAQAccordion({ faq }: { faq: FAQItem[] }) {

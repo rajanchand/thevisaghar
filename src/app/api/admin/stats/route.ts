@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/db";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -36,19 +36,19 @@ export async function GET(request: NextRequest) {
 
     // Format recent activities into a single timeline
     const activities = [
-      ...recentInquiries.map((inq: any) => ({
+      ...recentInquiries.map((inq) => ({
         id: inq.id,
         type: "inquiry",
         message: `New inquiry from ${inq.name} for ${inq.visaType}`,
         time: inq.createdAt.toISOString(),
       })),
-      ...recentBookings.map((book: any) => ({
+      ...recentBookings.map((book) => ({
         id: book.id,
         type: "booking",
         message: `Consultation booked by ${book.name} (${book.status})`,
         time: book.createdAt.toISOString(),
       })),
-      ...recentBlogs.map((post: any) => ({
+      ...recentBlogs.map((post) => ({
         id: post.id,
         type: "blog",
         message: `Blog post '${post.title}' created`,

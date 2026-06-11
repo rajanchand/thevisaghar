@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { generateStarArray, getInitials } from "@/lib/utils";
@@ -45,10 +46,13 @@ export function TestimonialCard({ clientName, clientPhoto, visaType, rating, con
         {/* Avatar */}
         <div className="w-11 h-11 rounded-full bg-navy flex items-center justify-center flex-shrink-0">
           {clientPhoto ? (
-            <img
+            <Image
               src={clientPhoto}
               alt={clientName}
-              className="w-full h-full rounded-full object-cover"
+              width={44}
+              height={44}
+              className="rounded-full object-cover"
+              unoptimized
             />
           ) : (
             <span className="text-gold text-sm font-bold">{getInitials(clientName)}</span>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
     const limit = Math.max(1, Math.min(50, parseInt(searchParams.get("limit") || "9", 10)));
     const skip = (page - 1) * limit;
 
-    const where: any = {
+    const where: Prisma.BlogPostWhereInput = {
       published: true,
     };
 

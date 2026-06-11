@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BlogCard } from "@/components/ui/BlogCard";
-import { Search, Filter, RefreshCw, FileText } from "lucide-react";
+import { Search, FileText } from "lucide-react";
 
 interface BlogPost {
   title: string;

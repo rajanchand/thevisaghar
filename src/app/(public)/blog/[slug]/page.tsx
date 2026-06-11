@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Calendar, ArrowLeft, Tag, User, Clock, RefreshCw } from "lucide-react";
+import { Calendar, ArrowLeft, Tag, User, RefreshCw } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 interface Author {
@@ -14,7 +14,7 @@ interface Author {
 interface BlogPost {
   title: string;
   slug: string;
-  content: any; // Stored as Json { html: string } or raw string html
+  content: { html: string } | string | null; // Stored as Json { html: string } or raw string html
   category: string;
   tags: string[];
   publishedAt: string;
@@ -49,7 +49,7 @@ export default function BlogPostPage() {
     }
   }, [slug]);
 
-  const getHtmlContent = (content: any): string => {
+  const getHtmlContent = (content: { html?: string } | string | null): string => {
     if (!content) return "";
     if (typeof content === "object") {
       return content.html || "";

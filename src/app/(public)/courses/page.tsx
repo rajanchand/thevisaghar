@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, Languages, BookOpen, FileText, Monitor } from "lucide-react";
 import { MOCK_SERVICES } from "@/lib/mock-data";
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   "languages": Languages,
   "book-open": BookOpen,
   "file-text": FileText,
