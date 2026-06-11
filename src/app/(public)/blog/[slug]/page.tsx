@@ -1,161 +1,58 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
-import { Calendar, ArrowLeft, Tag, User, RefreshCw } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { notFound } from "next/navigation";
+import prisma from "@/lib/db";
+import { BlogPostClient } from "./BlogPostClient";
+import type { Metadata } from "next";
 
-interface Author {
-  name: string;
+interface Props {
+  params: Promise<{
+    slug: string;
+  }>;
 }
 
-interface BlogPost {
-  title: string;
-  slug: string;
-  content: { html: string } | string | null; // Stored as Json { html: string } or raw string html
-  category: string;
-  tags: string[];
-  publishedAt: string;
-  author: Author;
-}
-
-export default function BlogPostPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/blog/${slug}`);
-        if (res.ok) {
-          const data = await res.json();
-          setPost(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch public blog details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (slug) {
-      fetchPost();
-    }
-  }, [slug]);
-
-  const getHtmlContent = (content: { html?: string } | string | null): string => {
-    if (!content) return "";
-    if (typeof content === "object") {
-      return content.html || "";
-    }
-    return String(content);
-  };
-
-  if (loading) {
-    return (
-      <div className="pt-32 pb-20 section-container text-center space-y-4">
-        <RefreshCw className="animate-spin mx-auto text-gold" size={32} />
-        <p className="text-gray-400 text-sm">Loading article details...</p>
-      </div>
-    );
-  }
+// ─── Dynamic SEO Metadata ───────────────────────────────────────────────────
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const resolvedParams = await params;
+  const post = await prisma.blogPost.findUnique({
+    where: { slug: resolvedParams.slug, published: true },
+  });
 
   if (!post) {
-    return (
-      <div className="pt-32 pb-20 section-container text-center">
-        <h1 className="text-3xl font-bold text-navy mb-4">Post Not Found</h1>
-        <p className="text-gray-500 mb-8">The blog post you are looking for does not exist or has been archived.</p>
-        <Link href="/blog" className="text-gold font-semibold hover:underline">
-          ← Back to Blog
-        </Link>
-      </div>
-    );
+    return {
+      title: "Article Not Found | The Visa Ghar",
+    };
   }
 
-  const articleHtml = getHtmlContent(post.content);
+  return {
+    title: `${post.title} | The Visa Ghar`,
+    description: post.excerpt || `${post.title} - Read the latest immigration guides and study abroad insights from The Visa Ghar.`,
+    openGraph: {
+      title: `${post.title} | The Visa Ghar`,
+      description: post.excerpt || `${post.title} - Read the latest immigration guides and study abroad insights from The Visa Ghar.`,
+      url: `https://thevisaghar.com/blog/${post.slug}`,
+      type: "article",
+      publishedTime: post.publishedAt?.toISOString(),
+    },
+  };
+}
 
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            "headline": post.title,
-            "datePublished": post.publishedAt,
-            "author": {
-              "@type": "Person",
-              "name": post.author?.name || "Admin",
-            },
-            "publisher": {
-              "@type": "Organization",
-              "name": "The Visa Ghar",
-              "logo": "https://thevisaghar.com/images/logo.png",
-            },
-          }),
-        }}
-      />
-      {/* Hero */}
-      <section className="pt-32 pb-16 bg-gradient-navy">
-        <div className="section-container">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-gray-300 hover:text-white text-sm mb-6 transition-colors"
-          >
-            <ArrowLeft size={16} /> All Articles
-          </Link>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <span className="inline-block px-3 py-1 bg-gold text-navy text-xs font-semibold rounded-full mb-4">
-              {post.category}
-            </span>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 max-w-4xl">
-              {post.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-4 text-gray-300 text-sm">
-              <span className="flex items-center gap-2">
-                <User size={14} />
-                {post.author?.name || "Admin"}
-              </span>
-              <span className="flex items-center gap-2">
-                <Calendar size={14} />
-                {formatDate(post.publishedAt)}
-              </span>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+export default async function BlogPostPage({ params }: Props) {
+  const resolvedParams = await params;
+  const post = await prisma.blogPost.findUnique({
+    where: { slug: resolvedParams.slug, published: true },
+    include: {
+      author: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
 
-      {/* Content */}
-      <section className="py-16">
-        <div className="section-container">
-          <div className="max-w-3xl mx-auto">
-            {/* Rich text container */}
-            <article
-              className="prose prose-sm md:prose-base max-w-none text-gray-700 leading-relaxed space-y-4"
-              dangerouslySetInnerHTML={{ __html: articleHtml }}
-            />
+  if (!post) {
+    notFound();
+  }
 
-            {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-12 pt-8 border-t border-gray-200">
-                <Tag size={16} className="text-gray-400 mt-1" />
-                {post.tags.map((tag) => (
-                  <span key={tag} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-    </>
-  );
+  return <BlogPostClient post={post} />;
 }
