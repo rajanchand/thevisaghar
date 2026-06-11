@@ -26,8 +26,8 @@ interface ServiceDetailClientProps {
     price?: string | null;
     processingTime?: string | null;
     eligibility?: string | null;
-    documentsRequired: any; // Json type
-    faq: any; // Json type
+    documentsRequired: unknown; // Json type
+    faq: unknown; // Json type
   };
 }
 

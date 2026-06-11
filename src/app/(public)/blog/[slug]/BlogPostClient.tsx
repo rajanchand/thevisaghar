@@ -10,9 +10,9 @@ interface BlogPostClientProps {
   post: {
     title: string;
     slug: string;
-    content: any; // Json type
+    content: unknown; // Json type
     category: string;
-    tags: any; // Json type
+    tags: unknown; // Json type
     publishedAt: Date | null;
     author: {
       name: string;
@@ -21,10 +21,10 @@ interface BlogPostClientProps {
 }
 
 export function BlogPostClient({ post }: BlogPostClientProps) {
-  const getHtmlContent = (content: { html?: string } | string | null): string => {
+  const getHtmlContent = (content: unknown): string => {
     if (!content) return "";
-    if (typeof content === "object") {
-      return content.html || "";
+    if (typeof content === "object" && content !== null && "html" in content) {
+      return (content as { html?: string }).html || "";
     }
     return String(content);
   };
