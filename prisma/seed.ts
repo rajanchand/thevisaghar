@@ -7,7 +7,12 @@ async function main() {
   console.log("🌱 Seeding database...");
 
   // ─── Admin User ──────────────────────────────────────────────────────────
-  const passwordHash = await bcrypt.hash("Admin123!", 12);
+  const adminPassword = process.env.ADMIN_SEED_PASSWORD || "Admin123!";
+  if (!process.env.ADMIN_SEED_PASSWORD) {
+    console.warn("⚠️  ADMIN_SEED_PASSWORD not set — using default. Change this in production!");
+  }
+
+  const passwordHash = await bcrypt.hash(adminPassword, 12);
   const admin = await prisma.user.upsert({
     where: { email: "admin@thevisaghar.com" },
     update: {},
@@ -29,13 +34,13 @@ async function main() {
       shortDescription: "Study at top universities globally with our expert student visa guidance.",
       icon: "graduation-cap",
       price: "Contact Us",
-      documentsRequired: JSON.stringify(["Valid passport", "Offer letter / CAS / I-20", "Financial evidence", "Language proficiency test (IELTS/PTE)", "Academic transcripts", "TB test results (if applicable)"]),
+      documentsRequired: ["Valid passport", "Offer letter / CAS / I-20", "Financial evidence", "Language proficiency test (IELTS/PTE)", "Academic transcripts", "TB test results (if applicable)"],
       processingTime: "4-12 weeks",
       eligibility: "An unconditional/conditional offer letter from a recognized educational institution. Proof of financial capability to pay tuition fees and cover living costs. Meet language requirements of the destination.",
-      faq: JSON.stringify([
+      faq: [
         { question: "Can I work on a student visa?", answer: "Yes, most countries allow international students to work part-time (usually up to 20 hours per week) during terms and full-time during breaks." },
         { question: "Do you help with university admission?", answer: "Yes, we provide end-to-end guidance including university selection, admission application, SOP writing, and visa documentation." },
-      ]),
+      ],
       order: 1,
     },
     {
@@ -45,13 +50,13 @@ async function main() {
       shortDescription: "Comprehensive Japanese language preparation classes for JLPT N5 & N4 levels.",
       icon: "languages",
       price: "Contact Us",
-      documentsRequired: JSON.stringify(["Identification proof", "JLPT exam form (if registering)"]),
+      documentsRequired: ["Identification proof", "JLPT exam form (if registering)"],
       processingTime: "8-12 weeks",
       eligibility: "Open to all students and professionals aiming to study or work in Japan.",
-      faq: JSON.stringify([
+      faq: [
         { question: "What do N5 and N4 levels cover?", answer: "N5 is basic (hiragana, katakana, essential kanji, basic grammar). N4 covers more advanced grammar and vocabulary for everyday conversations." },
         { question: "Does this course help with Japan Student Visa?", answer: "Yes, a minimum of 150 hours of Japanese language study or JLPT N5 certificate is highly recommended for Japan visa applicants." },
-      ]),
+      ],
       order: 2,
     },
     {
@@ -61,13 +66,13 @@ async function main() {
       shortDescription: "Expert IELTS coaching with regular mock tests and mock speaking practice.",
       icon: "book-open",
       price: "Contact Us",
-      documentsRequired: JSON.stringify(["Valid Passport", "Enrollment Form"]),
+      documentsRequired: ["Valid Passport", "Enrollment Form"],
       processingTime: "4-8 weeks",
       eligibility: "Intermediate English level recommended.",
-      faq: JSON.stringify([
+      faq: [
         { question: "How long is the IELTS score valid?", answer: "IELTS scores are valid for 2 years from the test date." },
         { question: "Do you conduct weekend mock tests?", answer: "Yes, we conduct full-length mock tests every week with complete assessment and feedback." },
-      ]),
+      ],
       order: 3,
     },
     {
@@ -77,13 +82,13 @@ async function main() {
       shortDescription: "Interactive PTE Academic coaching with computer lab simulations.",
       icon: "file-text",
       price: "Contact Us",
-      documentsRequired: JSON.stringify(["Valid Passport", "Enrollment Form"]),
+      documentsRequired: ["Valid Passport", "Enrollment Form"],
       processingTime: "4-8 weeks",
       eligibility: "Intermediate English level recommended.",
-      faq: JSON.stringify([
+      faq: [
         { question: "How fast do I get my PTE results?", answer: "PTE Academic results are typically available within 48 hours of taking the test." },
         { question: "Is PTE accepted for Australia and UK?", answer: "Yes, PTE Academic is widely accepted for study and migration visas in Australia, New Zealand, the UK, and Canada." },
-      ]),
+      ],
       order: 4,
     },
     {
@@ -93,13 +98,13 @@ async function main() {
       shortDescription: "Essential digital literacy and MS Office training for students and adults.",
       icon: "monitor",
       price: "Contact Us",
-      documentsRequired: JSON.stringify(["Enrollment Form"]),
+      documentsRequired: ["Enrollment Form"],
       processingTime: "4-6 weeks",
       eligibility: "Open to beginners of all ages.",
-      faq: JSON.stringify([
+      faq: [
         { question: "Will I get hands-on computer practice?", answer: "Yes, our classes are conducted in a dedicated computer lab with one-to-one PC access." },
         { question: "Is this class helpful for abroad study?", answer: "Yes, basic computer skills are essential for writing assignments, researching online, and academic presentations abroad." },
-      ]),
+      ],
       order: 5,
     },
   ];
@@ -178,16 +183,16 @@ async function main() {
     {
       title: "How to Prepare for the Japanese Language N5/N4 Test",
       slug: "prepare-japanese-language-n5-n4-test",
-      content: JSON.stringify({
+      content: {
         type: "doc",
         content: [
           { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Master Japanese Language Proficiency" }] },
           { type: "paragraph", content: [{ type: "text", text: "To study or work in Japan, passing the JLPT N5 or N4 levels is a crucial first step. Our classes at The Visa Ghar are designed to equip you with the essential Hiragana, Katakana, Kanji, and grammar skills required." }] },
         ],
-      }),
+      },
       excerpt: "Comprehensive preparation guide for JLPT N5 and N4 Japanese language levels for students in Kathmandu.",
       category: "Japanese Language",
-      tags: JSON.stringify(["Japan", "N5", "N4", "JLPT", "Guide"]),
+      tags: ["Japan", "N5", "N4", "JLPT", "Guide"],
       seoTitle: "How to Prepare for the Japanese Language N5/N4 Test | The Visa Ghar",
       seoDescription: "Preparation strategies for Japanese language N5 and N4 tests. Get tips from Kathmandu's best instructors.",
       published: true,
@@ -197,16 +202,16 @@ async function main() {
     {
       title: "Top 10 Tips for a Successful Student Visa Application",
       slug: "top-10-tips-successful-student-visa",
-      content: JSON.stringify({
+      content: {
         type: "doc",
         content: [
           { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Maximize Your Chances of Approval" }] },
           { type: "paragraph", content: [{ type: "text", text: "Getting your student visa requires careful planning and precise document curation. Here are the top 10 tips based on years of successful applications at The Visa Ghar." }] },
         ],
-      }),
+      },
       excerpt: "Expert tips from The Visa Ghar counseling team to help Nepali students get their student visa approved on the first attempt.",
       category: "Study Abroad",
-      tags: JSON.stringify(["Student Visa", "Tips", "Study Abroad", "Kathmandu"]),
+      tags: ["Student Visa", "Tips", "Study Abroad", "Kathmandu"],
       seoTitle: "10 Tips for Student Visa Success | The Visa Ghar",
       seoDescription: "Learn key strategies and documentation checklists for getting your student visa approved from Nepal.",
       published: true,
@@ -216,16 +221,16 @@ async function main() {
     {
       title: "IELTS vs. PTE: Which Test Should You Take?",
       slug: "ielts-vs-pte-which-test-should-you-take",
-      content: JSON.stringify({
+      content: {
         type: "doc",
         content: [
           { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Choosing the Right English Test" }] },
           { type: "paragraph", content: [{ type: "text", text: "Both IELTS and PTE are widely accepted for admissions and student visas globally. However, their formats and testing styles differ significantly." }] },
         ],
-      }),
+      },
       excerpt: "Compare IELTS and PTE test structures, scoring, difficulty, and acceptance to decide the best path for your study abroad dreams.",
       category: "Test Preparation",
-      tags: JSON.stringify(["IELTS", "PTE", "English Test", "Coaching"]),
+      tags: ["IELTS", "PTE", "English Test", "Coaching"],
       seoTitle: "IELTS vs. PTE: Which Test Should You Take? | The Visa Ghar",
       seoDescription: "Detailed comparison of IELTS and PTE Academic tests. Learn about formats, scoring, and acceptance.",
       published: true,
@@ -271,7 +276,7 @@ async function main() {
   console.log("");
   console.log("📌 Admin Login Credentials:");
   console.log("   Email:    admin@thevisaghar.com");
-  console.log("   Password: Admin123!");
+  console.log("   Password: (set via ADMIN_SEED_PASSWORD env var)");
 }
 
 main()

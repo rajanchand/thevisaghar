@@ -1,3 +1,4 @@
+import { rateLimit, RATE_LIMITS, getClientIP } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -11,6 +12,9 @@ export async function GET() {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const team = await prisma.teamMember.findMany({
@@ -30,9 +34,22 @@ export async function GET() {
 // POST create a new team member
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const ip = getClientIP(request);
+    const { success: rateLimitOk } = rateLimit(`adminWrite:${ip}`, RATE_LIMITS.adminWrite);
+    if (!rateLimitOk) {
+      return NextResponse.json(
+        { error: "Too many write requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const body = await request.json();

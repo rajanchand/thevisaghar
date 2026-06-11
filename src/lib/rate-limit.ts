@@ -29,6 +29,10 @@ export const RATE_LIMITS = {
   chat: { interval: 60_000, maxRequests: 10 },
   /** 20 requests per minute — general API reads */
   read: { interval: 60_000, maxRequests: 20 },
+  /** 30 requests per minute — admin write operations */
+  adminWrite: { interval: 60_000, maxRequests: 30 },
+  /** 5 requests per 15 minutes — login attempts */
+  login: { interval: 15 * 60_000, maxRequests: 5 },
 } as const;
 
 const bucket = new Map<string, RateLimitEntry>();

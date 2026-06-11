@@ -1,0 +1,16 @@
+{
+  "name": "The Visa Ghar",
+  "short_name": "Visa Ghar",
+  "description": "Expert visa consultancy for UK, Schengen, and Australia from Nepal. Book a free consultation today.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F6F0",
+  "theme_color": "#0B1F4B",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

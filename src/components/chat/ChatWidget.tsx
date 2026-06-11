@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useChat, type Message } from "@ai-sdk/react";
+import { useChat, type UIMessage as Message } from "@ai-sdk/react";
 import { TextStreamChatTransport } from "ai";
 import { X, Send, MessageCircle, Sparkles } from "lucide-react";
 
@@ -139,7 +139,7 @@ export function ChatWidget() {
                           const p = part as { type: string; text?: string };
                           return p.type === "text" ? <span key={index}>{p.text}</span> : null;
                         })
-                      : message.content}
+                      : (message as { content?: string }).content}
                   </div>
                 </div>
               ))}

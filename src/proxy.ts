@@ -5,17 +5,44 @@ import { getToken } from "next-auth/jwt";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ─── Admin Route Protection ─────────────────────────────────────────────
-  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
+  // Get JWT token from the session cookie
+  const isApiAdmin = pathname.startsWith("/api/admin");
+  const isAdminPage = pathname.startsWith("/admin") && !pathname.startsWith("/admin/login");
+
+  if (isApiAdmin || isAdminPage) {
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
     });
 
-    if (!token) {
-      const loginUrl = new URL("/admin/login", request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
+    // ─── Admin Page Protection ─────────────────────────────────────────────
+    if (isAdminPage) {
+      if (!token) {
+        const loginUrl = new URL("/admin/login", request.url);
+        loginUrl.searchParams.set("callbackUrl", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+
+      if (token.role !== "ADMIN") {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+    }
+
+    // ─── Admin API Protection ──────────────────────────────────────────────
+    if (isApiAdmin) {
+      if (!token) {
+        return NextResponse.json(
+          { error: "Unauthorized" },
+          { status: 401 }
+        );
+      }
+
+      if (token.role !== "ADMIN") {
+        return NextResponse.json(
+          { error: "Forbidden — admin access required" },
+          { status: 403 }
+        );
+      }
     }
 
     // Optional: IP Allowlist for admin routes
@@ -25,6 +52,9 @@ export async function proxy(request: NextRequest) {
                        request.headers.get("x-real-ip") || "unknown";
       const allowList = allowedIPs.split(",").map((ip) => ip.trim());
       if (!allowList.includes(clientIP) && clientIP !== "unknown" && clientIP !== "127.0.0.1" && clientIP !== "::1") {
+        if (isApiAdmin) {
+          return NextResponse.json({ error: "Forbidden — IP not allowed" }, { status: 403 });
+        }
         return new NextResponse("Forbidden", { status: 403 });
       }
     }

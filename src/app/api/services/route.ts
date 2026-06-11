@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { MOCK_SERVICES } from "@/lib/mock-data";
 
@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json(MOCK_SERVICES);
     }
     return NextResponse.json(services);
-  } catch (error) {
+  } catch {
     console.warn("[Public Services GET Warning] Database offline, returning mock data.");
     return NextResponse.json(MOCK_SERVICES);
   }

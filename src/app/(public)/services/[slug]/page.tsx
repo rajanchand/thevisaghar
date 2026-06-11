@@ -131,6 +131,23 @@ export default function ServiceDetailPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": service.title,
+            "description": service.description,
+            "provider": {
+              "@type": "LocalBusiness",
+              "name": "The Visa Ghar",
+              "url": "https://thevisaghar.com",
+            },
+            "areaServed": "NP",
+          }),
+        }}
+      />
       {/* Hero */}
       <section className="pt-32 pb-16 bg-gradient-navy">
         <div className="section-container">

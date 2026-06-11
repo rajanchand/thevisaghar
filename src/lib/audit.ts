@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 interface AuditLogParams {
   action: string;
@@ -24,7 +25,7 @@ export async function logAudit({
         entity,
         entityId,
         userId,
-        details: details || {},
+        details: details as Prisma.InputJsonValue,
         ipAddress,
       },
     });

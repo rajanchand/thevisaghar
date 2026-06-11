@@ -1,12 +1,12 @@
 // Prisma Schema for The Visa Ghar
-// Database: SQLite (local development)
+// Database: PostgreSQL (production-ready)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -36,10 +36,10 @@ model Service {
   shortDescription   String?
   icon               String   @default("briefcase")
   price              String?
-  documentsRequired  String   @default("[]")
+  documentsRequired  Json     @default("[]")
   processingTime     String?
   eligibility        String?
-  faq                String?  @default("[]")
+  faq                Json?    @default("[]")
   order              Int      @default(0)
   isActive           Boolean  @default(true)
   createdAt          DateTime @default(now())
@@ -54,11 +54,11 @@ model BlogPost {
   id             String    @id @default(cuid())
   title          String
   slug           String    @unique
-  content        String
+  content        Json
   excerpt        String?
   featuredImage  String?
   category       String    @default("General")
-  tags           String    @default("[]")
+  tags           Json      @default("[]")
   seoTitle       String?
   seoDescription String?
   ogImage        String?
@@ -156,7 +156,7 @@ model AuditLog {
   entityId  String?
   userId    String?
   user      User?    @relation(fields: [userId], references: [id])
-  details   String?
+  details   Json?
   ipAddress String?
   createdAt DateTime @default(now())
 

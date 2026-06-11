@@ -72,7 +72,7 @@ export default async function HomePage() {
           publishedAt: p.publishedAt ?? new Date(),
         })) 
       : MOCK_BLOG_POSTS;
-  } catch (_error) {
+  } catch {
     console.warn("Database offline during home page build, falling back to mock data.");
     services = MOCK_SERVICES;
     testimonials = MOCK_TESTIMONIALS;

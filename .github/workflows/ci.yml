@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main, master ]
 
+env:
+  DATABASE_URL: "postgresql://test:test@localhost:5432/test"
+  NEXTAUTH_SECRET: "ci-test-secret-at-least-32-characters-long"
+  NEXTAUTH_URL: "http://localhost:3000"
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -21,10 +26,10 @@ jobs:
         cache: "npm"
 
     - name: Install dependencies
-      run: npm ci --legacy-peer-deps
+      run: npm ci
 
     - name: Security audit
-      run: npm audit --audit-level=high || true
+      run: npm audit --audit-level=high
 
     - name: Run lint
       run: npm run lint

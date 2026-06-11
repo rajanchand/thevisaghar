@@ -82,6 +82,26 @@ export default function BlogPostPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": post.title,
+            "datePublished": post.publishedAt,
+            "author": {
+              "@type": "Person",
+              "name": post.author?.name || "Admin",
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "The Visa Ghar",
+              "logo": "https://thevisaghar.com/images/logo.png",
+            },
+          }),
+        }}
+      />
       {/* Hero */}
       <section className="pt-32 pb-16 bg-gradient-navy">
         <div className="section-container">

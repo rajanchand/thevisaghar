@@ -22,7 +22,7 @@ export async function GET(
     }
 
     return NextResponse.json(service);
-  } catch (error) {
+  } catch {
     console.warn("[Public Service Detail GET Warning] Database offline, checking mock data.");
     try {
       const { slug } = await params;
@@ -30,7 +30,7 @@ export async function GET(
       if (mockService) {
         return NextResponse.json(mockService);
       }
-    } catch (_) {}
+    } catch {}
     return NextResponse.json(
       { error: "Failed to fetch service details" },
       { status: 500 }

@@ -1,7 +1,13 @@
+
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limit";
+import { logAudit } from "@/lib/audit";
+
+// Login rate limit: 5 attempts per 15 minutes
+const LOGIN_RATE_LIMIT = { interval: 15 * 60_000, maxRequests: 5 };
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,6 +20,21 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
+        }
+
+        // Rate limit login attempts by email
+        const { success: rateLimitOk } = rateLimit(
+          `login:${credentials.email}`,
+          LOGIN_RATE_LIMIT
+        );
+        if (!rateLimitOk) {
+          // Log the rate-limited attempt
+          await logAudit({
+            action: "LOGIN_RATE_LIMITED",
+            entity: "User",
+            details: { email: credentials.email },
+          });
+          throw new Error("Too many login attempts. Please try again in 15 minutes.");
         }
 
         const user = await prisma.user.findUnique({
@@ -37,7 +58,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
+          role: user.role as "ADMIN" | "EDITOR",
         };
       },
     }),
