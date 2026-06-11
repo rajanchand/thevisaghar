@@ -10,6 +10,7 @@ import { logAudit } from "@/lib/audit";
 const LOGIN_RATE_LIMIT = { interval: 15 * 60_000, maxRequests: 5 };
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -88,17 +89,6 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role;
       }
       return session;
-    },
-  },
-  cookies: {
-    sessionToken: {
-      name: "next-auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "strict",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
     },
   },
 };
