@@ -21,7 +21,7 @@ export function AnimatedCounter({
   icon,
 }: AnimatedCounterProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-10px" });
   const [count, setCount] = useState(0);
 
   useEffect(() => {

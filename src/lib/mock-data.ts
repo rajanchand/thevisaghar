@@ -150,28 +150,28 @@ export const MOCK_SERVICES: ServiceDetail[] = [
 export const MOCK_TESTIMONIALS: TestimonialSummary[] = [
   {
     clientName: "Sachita Lamichhane",
-    clientPhoto: null,
+    clientPhoto: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
     visaType: "Finland Dependent Visa Granted",
     rating: 5,
     content: "Getting my Finland Dependent Visa was hassle-free with The Visa Ghar. Their counseling was extremely transparent, and they guided me perfectly on the financial and documentation requirements."
   },
   {
     clientName: "Bunu Rijal",
-    clientPhoto: null,
+    clientPhoto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
     visaType: "Finland Dependent Visa Granted",
     rating: 5,
     content: "Highly recommend The Visa Ghar for study abroad and family dependent applications. Very professional staff and always responsive to our inquiries!"
   },
   {
     clientName: "Bishal Upadhyay",
-    clientPhoto: null,
+    clientPhoto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
     visaType: "UK Visa Granted",
     rating: 5,
     content: "The Visa Ghar made my UK student visa application look so simple. From CAS tracking to interview prep, they supported me all the way. Got my visa within 3 weeks!"
   },
   {
     clientName: "Chadani Gautam",
-    clientPhoto: null,
+    clientPhoto: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face",
     visaType: "UK Visa Granted",
     rating: 5,
     content: "The instructors for IELTS/PTE classes and the counseling team are top-notch. I scored a 7.5 band in IELTS and got my UK visa approved on the first attempt."
