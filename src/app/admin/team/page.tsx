@@ -59,7 +59,7 @@ export default function AdminTeam() {
 
   useEffect(() => {
     void (async () => { await fetchTeam(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOpenCreate = () => {
     setEditingMember(null);

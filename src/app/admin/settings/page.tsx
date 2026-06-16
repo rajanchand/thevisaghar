@@ -63,7 +63,7 @@ export default function AdminSettings() {
 
   useEffect(() => {
     void (async () => { await fetchSettings(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleInputChange = (key: string, value: string) => {
     setSettings((prev) => ({

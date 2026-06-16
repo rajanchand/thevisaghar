@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
 
     // Convert to node Buffer
     const arrayBuffer = await file.arrayBuffer();
-    let fileBuffer = Buffer.from(arrayBuffer) as any;
+    let fileBuffer = Buffer.from(arrayBuffer) as unknown as Buffer;
 
     // 3. Prevent Extension Spoofing via Header Sniffing
     if (!verifyFileSignature(fileBuffer, mimeType)) {

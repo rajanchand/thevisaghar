@@ -81,7 +81,7 @@ export default function AdminServices() {
 
   useEffect(() => {
     void (async () => { await fetchServices(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // Slug generator useEffect removed to prevent cascading renders
 

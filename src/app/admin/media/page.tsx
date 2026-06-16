@@ -12,7 +12,6 @@ import {
   RefreshCw,
   X,
   FileText,
-  Image as ImageIcon,
   AlertCircle,
   CheckCircle2,
   ExternalLink,

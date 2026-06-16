@@ -63,7 +63,7 @@ export default function AdminTestimonials() {
 
   useEffect(() => {
     void (async () => { await fetchTestimonials(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOpenCreate = () => {
     setEditingTestimonial(null);
