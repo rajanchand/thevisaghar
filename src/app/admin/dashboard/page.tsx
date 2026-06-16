@@ -70,7 +70,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     void (async () => { await fetchDashboardData(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const timeAgo = (dateString: string) => {
     const now = new Date();

@@ -63,7 +63,7 @@ export default function AdminBookings() {
 
   useEffect(() => {
     void (async () => { await fetchBookings(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOpenEdit = (booking: Booking) => {
     setSelectedBooking(booking);

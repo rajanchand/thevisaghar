@@ -67,7 +67,7 @@ export default function AdminIntakes() {
 
   useEffect(() => {
     void (async () => { await fetchIntakes(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOpenCreate = () => {
     if (isReadOnly) return;

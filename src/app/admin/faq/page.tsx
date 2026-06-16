@@ -67,7 +67,7 @@ export default function AdminFAQ() {
 
   useEffect(() => {
     void (async () => { await fetchFaqs(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOpenCreate = () => {
     if (isReadOnly) return;

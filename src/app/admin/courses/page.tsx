@@ -64,7 +64,7 @@ export default function AdminCourses() {
 
   useEffect(() => {
     void (async () => { await fetchCourses(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOpenCreate = () => {
     if (isReadOnly) return;

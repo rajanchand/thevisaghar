@@ -109,7 +109,7 @@ export default function AdminCountries() {
 
   useEffect(() => {
     void (async () => { await fetchCountries(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOpenCreate = () => {
     if (isReadOnly) return;

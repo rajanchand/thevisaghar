@@ -88,15 +88,15 @@ export default function AdminBlog() {
 
   useEffect(() => {
     void (async () => { await fetchPosts(); })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (!slug) {
-      setIsSlugAvailable(true);
-      return;
-    }
-
     const timer = setTimeout(async () => {
+      if (!slug) {
+        setIsSlugAvailable(true);
+        return;
+      }
+
       try {
         setIsSlugChecking(true);
         const params = new URLSearchParams({ slug });

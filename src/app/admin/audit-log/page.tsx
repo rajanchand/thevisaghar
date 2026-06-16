@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   RefreshCw,
   Search,
-  Filter,
   Calendar,
   User,
   Shield,
@@ -151,7 +150,6 @@ export default function AdminAuditLog() {
   };
 
   const getFriendlyDetails = (log: AuditLog) => {
-    const actor = log.user?.name || "System";
     const details = log.details as Record<string, unknown> | null;
     
     switch (log.action) {
