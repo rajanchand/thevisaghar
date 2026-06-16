@@ -50,10 +50,14 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("[Public Blog GET Error]:", error);
     return NextResponse.json(
-      { error: "Failed to fetch blog posts" },
+      { 
+        error: "Failed to fetch blog posts", 
+        details: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     );
   }
