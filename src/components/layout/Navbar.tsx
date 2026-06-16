@@ -1,18 +1,52 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, ChevronDown, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const navLinks = [
+interface NavChild {
+  href: string;
+  label: string;
+}
+
+interface NavLink {
+  href: string;
+  label: string;
+  children?: NavChild[];
+}
+
+const navLinks: NavLink[] = [
   { href: "/", label: "Home" },
-  { href: "/services", label: "Services" },
-  { href: "/countries", label: "Study Abroad" },
+  {
+    href: "/services",
+    label: "Services",
+    children: [
+      { href: "/services/student-visa", label: "Student Visa" },
+      { href: "/services/ielts-class", label: "IELTS Preparation" },
+      { href: "/services/pte-class", label: "PTE Preparation" },
+      { href: "/services/japanese-language", label: "Japanese Language" },
+      { href: "/services/computer-class", label: "Computer Class" },
+    ],
+  },
+  {
+    href: "/countries",
+    label: "Study Abroad",
+    children: [
+      { href: "/countries/uk", label: "United Kingdom" },
+      { href: "/countries/australia", label: "Australia" },
+      { href: "/countries/usa", label: "USA" },
+      { href: "/countries/canada", label: "Canada" },
+      { href: "/countries/japan", label: "Japan" },
+      { href: "/countries", label: "All destinations →" },
+    ],
+  },
   { href: "/courses", label: "Test Prep" },
-  { href: "/about", label: "About Us" },
+  { href: "/tools", label: "Tools" },
+  { href: "/success-stories", label: "Success Stories" },
+  { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
@@ -21,107 +55,158 @@ export function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile menu on route change
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (pathname !== prevPathname) {
     setPrevPathname(pathname);
     setIsMobileMenuOpen(false);
+    setOpenDropdown(null);
   }
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [isMobileMenuOpen]);
 
-  const isHome = pathname === "/";
-  const showTransparent = isHome && !isScrolled;
+  const handleEnter = (label: string) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setOpenDropdown(label);
+  };
+
+  const handleLeave = () => {
+    timeoutRef.current = setTimeout(() => setOpenDropdown(null), 120);
+  };
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
-          showTransparent
-            ? "bg-transparent"
-            : "bg-white/95 backdrop-blur-md shadow-md"
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all border-b ${
+          isScrolled
+            ? "bg-surface/95 backdrop-blur-md border-border shadow-xs"
+            : "bg-surface border-border-faint"
         }`}
+        style={{ transitionDuration: "var(--duration-normal)" }}
       >
-        <nav className="section-container flex items-center justify-between h-[72px]" aria-label="Main navigation">
+        <nav
+          className="section-container flex items-center justify-between h-[72px]"
+          aria-label="Main navigation"
+        >
           {/* Logo */}
           <Link href="/" className="flex-shrink-0" aria-label="Go to homepage">
-            <Logo variant={showTransparent ? "white" : "dark"} size="md" />
+            <Logo variant="dark" size="md" />
           </Link>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-1">
+          {/* Desktop Links */}
+          <div className="hidden xl:flex items-center gap-1">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
+              const hasDropdown = !!link.children;
+
               return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
-                    showTransparent
-                      ? isActive
-                        ? "text-gold"
-                        : "text-gray-300 hover:text-white hover:bg-white/10"
-                      : isActive
-                        ? "text-gold"
-                        : "text-gray-700 hover:text-navy hover:bg-gray-50"
-                  }`}
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => hasDropdown && handleEnter(link.label)}
+                  onMouseLeave={() => hasDropdown && handleLeave()}
                 >
-                  {link.label}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeNav"
-                      className="absolute bottom-0 left-4 right-4 h-0.5 bg-gold rounded-full"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  <Link
+                    href={link.href}
+                    className={`group flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors ${
+                      isActive
+                        ? "text-primary"
+                        : "text-ink-light hover:text-ink hover:bg-surface-overlay"
+                    }`}
+                    style={{ transitionDuration: "var(--duration-fast)" }}
+                  >
+                    {link.label}
+                    {hasDropdown && (
+                      <ChevronDown
+                        size={12}
+                        className={`text-ink-faint transition-transform ${
+                          openDropdown === link.label ? "rotate-180" : ""
+                        }`}
+                        style={{ transitionDuration: "var(--duration-fast)" }}
+                      />
+                    )}
+                    {/* Active underline */}
+                    <span
+                      className={`absolute bottom-0 left-3.5 right-3.5 h-[2px] rounded-full transition-transform origin-left ${
+                        isActive
+                          ? "bg-accent scale-x-100"
+                          : "bg-accent scale-x-0 group-hover:scale-x-100"
+                      }`}
+                      style={{ transitionDuration: "var(--duration-normal)" }}
                     />
-                  )}
-                </Link>
+                  </Link>
+
+                  {/* Dropdown */}
+                  <AnimatePresence>
+                    {hasDropdown && openDropdown === link.label && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 6 }}
+                        transition={{ duration: 0.12 }}
+                        className="absolute top-full left-0 pt-1 z-50"
+                        onMouseEnter={() => handleEnter(link.label)}
+                        onMouseLeave={handleLeave}
+                      >
+                        <div className="w-56 bg-surface-raised rounded-xl shadow-lg border border-border-faint overflow-hidden py-1.5">
+                          {link.children?.map((child) => (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className="block px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-ink-light hover:text-primary hover:bg-surface-overlay transition-colors"
+                              style={{ transitionDuration: "var(--duration-fast)" }}
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               );
             })}
           </div>
 
-          {/* Desktop CTA + Phone */}
-          <div className="hidden lg:flex items-center gap-4">
+          {/* Desktop CTA */}
+          <div className="hidden xl:flex items-center gap-5">
             <a
               href="tel:+97714913776"
-              className={`flex items-center gap-2 text-sm font-medium ${
-                showTransparent ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-navy"
-              } transition-colors`}
+              className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ink-muted hover:text-primary transition-colors whitespace-nowrap"
+              style={{ transitionDuration: "var(--duration-fast)" }}
             >
-              <Phone size={16} />
-              <span>01-4913776, 9851338645</span>
+              <Phone size={12} className="text-accent" />
+              <span className="whitespace-nowrap">01-4913776</span>
             </a>
             <Link
               href="/book"
-              className="bg-gold hover:bg-gold-dark text-navy font-semibold text-sm px-6 py-2.5 rounded-lg transition-all duration-200 hover:shadow-gold transform hover:-translate-y-0.5"
+              className="bg-accent hover:bg-accent-dark text-primary font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-lg transition-all hover:shadow-accent transform hover:-translate-y-px whitespace-nowrap"
+              style={{ transitionDuration: "var(--duration-normal)" }}
             >
-              Book Free Consultation
+              Book Consultation
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden p-2 rounded-lg transition-colors ${
-              showTransparent ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"
-            }`}
+            className="xl:hidden p-2 rounded-lg text-ink-light hover:bg-surface-overlay transition-colors"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileMenuOpen}
           >
@@ -130,7 +215,7 @@ export function Navbar() {
         </nav>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* ─── Mobile Menu ─── */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -138,69 +223,115 @@ export function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[99] lg:hidden"
+            className="fixed inset-0 z-[500] xl:hidden"
           >
-            {/* Backdrop */}
             <div
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              className="absolute inset-0 bg-ink/30 backdrop-blur-sm"
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
-            {/* Mobile Menu Panel */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute right-0 top-0 bottom-0 w-[300px] bg-white shadow-xl"
+              transition={{ type: "spring", damping: 28, stiffness: 220 }}
+              className="absolute right-0 top-0 bottom-0 w-[300px] bg-surface-raised shadow-xl flex flex-col border-l border-border-faint"
             >
-              <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-border-faint bg-surface">
                 <Logo variant="dark" size="sm" />
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-2 rounded-lg text-gray-500 hover:bg-gray-100"
+                  className="p-2 rounded-lg text-ink-muted hover:bg-surface-overlay"
                   aria-label="Close menu"
                 >
                   <X size={20} />
                 </button>
               </div>
 
-              <nav className="p-6 space-y-1" aria-label="Mobile navigation">
-                {navLinks.map((link, index) => {
-                  const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+              {/* Links */}
+              <nav className="flex-1 overflow-y-auto p-5 space-y-0.5" aria-label="Mobile navigation">
+                {navLinks.map((link, i) => {
+                  const isActive =
+                    link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+                  const hasChildren = !!link.children;
+                  const isExpanded = mobileExpanded === link.label;
+
                   return (
                     <motion.div
-                      key={link.href}
-                      initial={{ opacity: 0, x: 20 }}
+                      key={link.label}
+                      initial={{ opacity: 0, x: 16 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
+                      transition={{ delay: i * 0.04 }}
                     >
-                      <Link
-                        href={link.href}
-                        className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                          isActive
-                            ? "text-gold bg-navy/5"
-                            : "text-gray-700 hover:text-navy hover:bg-gray-50"
-                        }`}
-                      >
-                        {link.label}
-                      </Link>
+                      <div className="flex items-center">
+                        <Link
+                          href={link.href}
+                          className={`flex-1 px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+                            isActive
+                              ? "text-primary bg-accent-muted/30"
+                              : "text-ink-light hover:text-ink hover:bg-surface-overlay"
+                          }`}
+                        >
+                          {link.label}
+                        </Link>
+                        {hasChildren && (
+                          <button
+                            onClick={() =>
+                              setMobileExpanded(isExpanded ? null : link.label)
+                            }
+                            className="p-2 rounded-lg text-ink-faint hover:text-ink-muted"
+                            aria-label={`Expand ${link.label}`}
+                          >
+                            <ChevronDown
+                              size={14}
+                              className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                            />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Sub-links */}
+                      <AnimatePresence>
+                        {hasChildren && isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="pl-4 py-1 space-y-0.5">
+                              {link.children?.map((child) => (
+                                <Link
+                                  key={child.href}
+                                  href={child.href}
+                                  className="block px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-ink-muted hover:text-primary rounded-lg hover:bg-surface-overlay transition-colors"
+                                >
+                                  {child.label}
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   );
                 })}
               </nav>
 
-              <div className="p-6 space-y-4 border-t border-gray-100">
+              {/* Mobile footer */}
+              <div className="p-5 space-y-3 border-t border-border-faint bg-surface">
                 <a
                   href="tel:+97714913776"
-                  className="flex items-center gap-3 text-sm text-gray-600 hover:text-navy"
+                  className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink-muted hover:text-primary"
                 >
-                  <Phone size={16} />
-                  01-4913776, 9851338645
+                  <Phone size={14} className="text-accent" />
+                  01-4913776 / 9851338645
                 </a>
                 <Link
                   href="/book"
-                  className="block w-full text-center bg-gold hover:bg-gold-dark text-navy font-semibold text-sm px-6 py-3 rounded-lg transition-all duration-200"
+                  className="block w-full text-center bg-accent hover:bg-accent-dark text-primary font-bold text-xs uppercase tracking-wider py-3.5 rounded-lg transition-all"
                 >
                   Book Free Consultation
                 </Link>

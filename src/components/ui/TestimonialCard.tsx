@@ -23,7 +23,8 @@ export function TestimonialCard({ clientName, clientPhoto, visaType, rating, con
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="bg-white rounded-2xl p-8 shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
+      className="bg-surface-raised rounded-2xl p-8 shadow-sm border border-border-faint hover:shadow-md transition-shadow duration-300 flex flex-col h-full"
+      style={{ fontFamily: "var(--font-body)" }}
     >
       {/* Stars */}
       <div className="flex gap-1 mb-4">
@@ -31,20 +32,20 @@ export function TestimonialCard({ clientName, clientPhoto, visaType, rating, con
           <Star
             key={i}
             size={18}
-            className={filled ? "text-gold fill-gold" : "text-gray-200"}
+            className={filled ? "text-accent fill-accent" : "text-border"}
           />
         ))}
       </div>
 
       {/* Quote */}
-      <blockquote className="text-gray-600 text-sm leading-relaxed flex-1 mb-6">
+      <blockquote className="text-ink-light text-sm leading-relaxed flex-1 mb-6">
         &ldquo;{content}&rdquo;
       </blockquote>
 
       {/* Client Info */}
-      <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+      <div className="flex items-center gap-3 pt-4 border-t border-border-faint">
         {/* Avatar */}
-        <div className="w-11 h-11 rounded-full bg-navy flex items-center justify-center flex-shrink-0">
+        <div className="w-11 h-11 rounded-full bg-primary-muted flex items-center justify-center flex-shrink-0">
           {clientPhoto ? (
             <Image
               src={clientPhoto}
@@ -55,13 +56,13 @@ export function TestimonialCard({ clientName, clientPhoto, visaType, rating, con
               unoptimized
             />
           ) : (
-            <span className="text-gold text-sm font-bold">{getInitials(clientName)}</span>
+            <span className="text-primary text-sm font-bold">{getInitials(clientName)}</span>
           )}
         </div>
 
         <div className="min-w-0">
-          <p className="text-navy font-semibold text-sm truncate">{clientName}</p>
-          <span className="inline-block px-2 py-0.5 bg-gold/10 text-gold-dark text-xs font-medium rounded-full mt-0.5">
+          <p className="text-primary font-semibold text-sm truncate">{clientName}</p>
+          <span className="inline-block px-2.5 py-0.5 bg-accent-muted text-accent-dark text-xs font-semibold rounded-full border border-accent/10 mt-0.5">
             {visaType}
           </span>
         </div>

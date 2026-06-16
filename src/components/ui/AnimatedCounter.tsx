@@ -56,13 +56,19 @@ export function AnimatedCounter({
       transition={{ duration: 0.5 }}
       className="text-center"
     >
-      {icon && <div className="text-gold mb-3 flex justify-center">{icon}</div>}
-      <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+      {icon && <div className="text-accent mb-4 flex justify-center">{icon}</div>}
+      <div
+        className="text-4xl md:text-5xl font-extrabold text-accent mb-2"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
         {prefix}
         {count.toLocaleString()}
         {suffix}
       </div>
-      <div className="text-gray-300 text-sm font-medium uppercase tracking-wider">
+      <div
+        className="text-white/70 text-xs font-semibold uppercase tracking-[0.15em]"
+        style={{ fontFamily: "var(--font-body)" }}
+      >
         {label}
       </div>
     </motion.div>

@@ -1,24 +1,35 @@
 import React from "react";
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
-import { Mail, Phone, MapPin, Plane } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { Facebook, Instagram, Linkedin, WhatsApp } from "@/components/ui/BrandIcons";
 
-const footerLinks = {
-  services: [
-    { href: "/services/student-visa", label: "Student Visa" },
-    { href: "/services/japanese-language", label: "Japanese Language" },
-    { href: "/services/ielts-class", label: "IELTS Class" },
-    { href: "/services/pte-class", label: "PTE Class" },
-    { href: "/services/computer-class", label: "Computer Class" },
-  ],
-  company: [
-    { href: "/about", label: "About Us" },
-    { href: "/blog", label: "Blog" },
-    { href: "/contact", label: "Contact" },
-    { href: "/book", label: "Book Consultation" },
-  ],
-};
+const serviceLinks = [
+  { href: "/services/student-visa", label: "Student Visa" },
+  { href: "/services/ielts-class", label: "IELTS Preparation" },
+  { href: "/services/pte-class", label: "PTE Preparation" },
+  { href: "/services/japanese-language", label: "Japanese Language" },
+  { href: "/services/computer-class", label: "Computer Class" },
+];
+
+const destinationLinks = [
+  { href: "/countries/uk", label: "United Kingdom" },
+  { href: "/countries/australia", label: "Australia" },
+  { href: "/countries/usa", label: "USA" },
+  { href: "/countries/canada", label: "Canada" },
+  { href: "/countries/japan", label: "Japan" },
+  { href: "/countries", label: "All destinations" },
+];
+
+const companyLinks = [
+  { href: "/about", label: "About Us" },
+  { href: "/success-stories", label: "Success Stories" },
+  { href: "/tools", label: "Student Tools" },
+  { href: "/blog", label: "Blog" },
+  { href: "/contact", label: "Contact" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/book", label: "Book Consultation" },
+];
 
 const socialLinks = [
   { href: "https://facebook.com/thevisaghar", icon: Facebook, label: "Facebook" },
@@ -29,51 +40,54 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-navy text-white relative overflow-hidden" role="contentinfo">
+    <footer className="bg-primary text-white relative overflow-hidden" role="contentinfo">
       {/* Main Footer */}
-      <div className="section-container py-20 lg:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
-          {/* Brand Column */}
-          <div className="space-y-6">
+      <div className="section-container py-16 lg:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
+          {/* Brand — wider column */}
+          <div className="lg:col-span-4 space-y-5">
             <Logo variant="white" size="md" />
-            <p className="text-gray-300 text-sm leading-relaxed">
-              Your trusted educational and immigration partner in Kathmandu. Enabling students from Nepal to achieve their dreams at world-class global academic institutions.
-            </p>
-            
-            {/* Accreditation details */}
-            <p className="text-xs text-gray-400 font-semibold leading-relaxed border-t border-white/5 pt-4">
-              Govt. Regd. No: 319208/080/081 <br />
-              Approved by MoEST (Ministry of Education, Science & Technology), Nepal.
+            <p className="text-white/70 text-sm leading-relaxed max-w-xs">
+              Your trusted study abroad partner in Kathmandu. We guide Nepali
+              students from course selection through visa approval and
+              pre-departure — every step, one to one.
             </p>
 
-            {/* Social Icons */}
-            <div className="flex gap-3 pt-2">
+            <p className="text-xs text-white/40 leading-relaxed border-t border-white/8 pt-4">
+              Govt. Regd. No: 319208/080/081
+              <br />
+              Approved by MoEST, Nepal.
+            </p>
+
+            <div className="flex gap-2.5 pt-1">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:border-gold hover:bg-gold/20 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 shadow-sm"
+                  className="w-9 h-9 rounded-full bg-white/6 border border-white/10 hover:border-accent hover:bg-accent/15 flex items-center justify-center transition-all hover:-translate-y-0.5"
+                  style={{ transitionDuration: "var(--duration-normal)" }}
                   aria-label={`Visit our ${social.label}`}
                 >
-                  <social.icon size={18} className="text-gray-300 hover:text-gold transition-colors duration-300" />
+                  <social.icon size={16} className="text-white/70" />
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Services Column */}
-          <div>
-            <h3 className="text-gold font-bold text-xs uppercase tracking-widest mb-6">
-              Our Services
+          {/* Services */}
+          <div className="lg:col-span-2">
+            <h3 className="text-accent font-semibold text-xs uppercase tracking-[0.15em] mb-5">
+              Services
             </h3>
-            <ul className="space-y-3.5">
-              {footerLinks.services.map((link) => (
+            <ul className="space-y-2.5">
+              {serviceLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-gray-300 hover:text-gold hover:translate-x-1.5 text-sm transition-all duration-250 inline-block"
+                    className="text-white/65 hover:text-white text-sm transition-colors inline-block"
+                    style={{ transitionDuration: "var(--duration-fast)" }}
                   >
                     {link.label}
                   </Link>
@@ -82,94 +96,101 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Company Column */}
-          <div>
-            <h3 className="text-gold font-bold text-xs uppercase tracking-widest mb-6">
+          {/* Study Destinations */}
+          <div className="lg:col-span-2">
+            <h3 className="text-accent font-semibold text-xs uppercase tracking-[0.15em] mb-5">
+              Destinations
+            </h3>
+            <ul className="space-y-2.5">
+              {destinationLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-white/65 hover:text-white text-sm transition-colors inline-block"
+                    style={{ transitionDuration: "var(--duration-fast)" }}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company + Contact */}
+          <div className="lg:col-span-4">
+            <h3 className="text-accent font-semibold text-xs uppercase tracking-[0.15em] mb-5">
               Company
             </h3>
-            <ul className="space-y-3.5">
-              {footerLinks.company.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-300 hover:text-gold hover:translate-x-1.5 text-sm transition-all duration-250 inline-block"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <div className="grid grid-cols-2 gap-x-6">
+              <ul className="space-y-2.5">
+                {companyLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-white/65 hover:text-white text-sm transition-colors inline-block"
+                      style={{ transitionDuration: "var(--duration-fast)" }}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
 
-          {/* Contact Column */}
-          <div>
-            <h3 className="text-gold font-bold text-xs uppercase tracking-widest mb-6">
-              Contact Us
-            </h3>
-            <ul className="space-y-4">
-              <li>
+              <div className="space-y-3">
                 <a
                   href="https://maps.google.com/?q=Boudha-6,+Pipalbot,+Kathmandu,+Nepal"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-3 text-gray-300 hover:text-gold transition-colors duration-200 group/item"
+                  className="flex items-start gap-2 text-white/65 hover:text-white transition-colors text-sm"
                 >
-                  <MapPin size={18} className="text-gold mt-0.5 flex-shrink-0 group-hover/item:scale-110 transition-transform" />
-                  <span className="text-sm">Boudha-6, Pipalbot, Kathmandu, Nepal</span>
+                  <MapPin size={14} className="text-accent mt-0.5 flex-shrink-0" />
+                  <span>Boudha-6, Pipalbot, Kathmandu</span>
                 </a>
-              </li>
-              <li>
-                <div className="space-y-2">
-                  <a
-                    href="tel:+97714913776"
-                    className="flex items-center gap-3 text-gray-300 hover:text-gold transition-colors duration-200 group/item"
-                  >
-                    <Phone size={18} className="text-gold flex-shrink-0 group-hover/item:scale-110 transition-transform" />
-                    <span className="text-sm">01-4913776</span>
-                  </a>
-                  <a
-                    href="tel:+9779851338645"
-                    className="flex items-center gap-3 text-gray-300 hover:text-gold transition-colors duration-200 group/item pl-[30px]"
-                  >
-                    <span className="text-sm">9851338645</span>
-                  </a>
-                </div>
-              </li>
-              <li>
+                <a
+                  href="tel:+97714913776"
+                  className="flex items-center gap-2 text-white/65 hover:text-white transition-colors text-sm"
+                >
+                  <Phone size={14} className="text-accent flex-shrink-0" />
+                  <span>01-4913776</span>
+                </a>
+                <a
+                  href="tel:+9779851338645"
+                  className="flex items-center gap-2 text-white/65 hover:text-white transition-colors text-sm pl-[22px]"
+                >
+                  <span>9851338645</span>
+                </a>
                 <a
                   href="mailto:info@thevisaghar.com"
-                  className="flex items-center gap-3 text-gray-300 hover:text-gold transition-colors duration-200 group/item"
+                  className="flex items-center gap-2 text-white/65 hover:text-white transition-colors text-sm"
                 >
-                  <Mail size={18} className="text-gold flex-shrink-0 group-hover/item:scale-110 transition-transform" />
-                  <span className="text-sm">info@thevisaghar.com</span>
+                  <Mail size={14} className="text-accent flex-shrink-0" />
+                  <span>info@thevisaghar.com</span>
                 </a>
-              </li>
-            </ul>
 
-            {/* Business Hours Box */}
-            <div className="mt-6 p-5 rounded-2xl bg-white/5 border border-white/10 relative overflow-hidden group">
-              <p className="text-gold text-xs font-bold uppercase tracking-wider">Business Hours</p>
-              <p className="text-gray-300 text-sm mt-1.5 font-medium">Sun – Fri: 10:00 AM – 6:00 PM</p>
-              <p className="text-gray-400 text-xs mt-0.5">Saturday: Closed</p>
-              {/* Decorative plane icon on bottom right */}
-              <Plane className="absolute right-4 bottom-4 w-10 h-10 text-gold/15 rotate-45 transform transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1 pointer-events-none" />
+                <div className="mt-4 p-3.5 rounded-xl bg-white/5 border border-white/8">
+                  <p className="text-accent text-xs font-semibold uppercase tracking-wider">
+                    Office hours
+                  </p>
+                  <p className="text-white/70 text-sm mt-1">Sun – Fri: 10 AM – 6 PM</p>
+                  <p className="text-white/40 text-xs mt-0.5">Saturday: Closed</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-white/10 bg-navy-dark/30 py-6">
-        <div className="section-container flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-400">
+      {/* Bottom bar */}
+      <div className="border-t border-white/8 py-5">
+        <div className="section-container flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/40">
           <p className="order-2 md:order-1 text-center md:text-left">
             © {new Date().getFullYear()} The Visa Ghar. All rights reserved.
           </p>
-          <div className="order-1 md:order-2 flex items-center gap-6">
-            <Link href="/privacy" className="hover:text-gold transition-colors duration-200">
+          <div className="order-1 md:order-2 flex items-center gap-5">
+            <Link href="/privacy" className="hover:text-white/70 transition-colors">
               Privacy Policy
             </Link>
-            <span className="text-white/10">|</span>
-            <Link href="/terms" className="hover:text-gold transition-colors duration-200">
+            <Link href="/terms" className="hover:text-white/70 transition-colors">
               Terms of Service
             </Link>
           </div>

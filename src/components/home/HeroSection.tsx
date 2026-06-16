@@ -2,117 +2,217 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+
+const statBadges = [
+  {
+    label: "15 Locations",
+    color: "bg-primary text-white",
+    position: "top-[10%] right-[5%]",
+    delay: 0.8,
+  },
+  {
+    label: "300+ Students on Full Scholarships",
+    color: "bg-accent text-primary",
+    position: "top-[32%] left-[-5%]",
+    delay: 1.0,
+  },
+  {
+    label: "10+ Years",
+    color: "bg-primary text-white",
+    position: "top-[55%] right-[-8%]",
+    delay: 1.2,
+  },
+  {
+    label: "97% Success Rate",
+    color: "bg-primary text-white",
+    position: "bottom-[18%] left-[-2%]",
+    delay: 1.4,
+  },
+];
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[100vh] flex items-center overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-navy" />
-      <div className="absolute inset-0 bg-[url('/images/hero-pattern.svg')] opacity-5" />
+    <section className="relative min-h-[100vh] flex items-center overflow-hidden bg-gradient-to-br from-surface to-surface-sunken pt-[72px]">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, #0E3B2E 1px, transparent 0)`,
+        backgroundSize: '40px 40px'
+      }} />
 
-      {/* Decorative Elements */}
-      <div className="absolute top-20 right-10 w-72 h-72 bg-gold/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 left-10 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-
-      {/* Content */}
-      <div className="relative z-10 section-container w-full py-32 lg:py-0">
-        <div className="max-w-3xl">
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/15 text-white/90 text-sm mb-8 backdrop-blur-sm"
-          >
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            Trusted by 2,000+ Nepali Clients
-          </motion.div>
-
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white leading-[1.1] mb-6"
-          >
-            From{" "}
-            <span className="text-gradient">Dreams</span>
-            {" "}to{" "}
-            <br className="hidden md:block" />
-            Achievements
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-lg md:text-xl text-gray-300 max-w-xl mb-10 leading-relaxed"
-          >
-            At The Visa Ghar, we provide one-on-one counseling, expert test preparation, and complete visa support to guide you confidently through every step of your study abroad journey.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-4"
-          >
-            <Link
-              href="/book"
-              className="inline-flex items-center justify-center gap-2 bg-gold hover:bg-gold-dark text-navy font-bold text-base px-8 py-4 rounded-xl transition-all duration-200 hover:shadow-gold transform hover:-translate-y-0.5"
+      {/* Content Container */}
+      <div className="relative z-10 section-container w-full py-16 lg:py-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center min-h-[calc(100vh-72px)]">
+          
+          {/* Left Column — Text Content */}
+          <div className="order-2 lg:order-1">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-extrabold leading-[1.1] mb-8 text-primary"
+              style={{ fontFamily: "var(--font-display)" }}
             >
-              Book Free Consultation
-              <ArrowRight size={18} />
-            </Link>
-            <Link
-              href="/services"
-              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-base px-8 py-4 rounded-xl border border-white/20 transition-all duration-200 backdrop-blur-sm"
-            >
-              Explore Services
-            </Link>
-          </motion.div>
+              Study Abroad
+              <br />
+              Consultancy in{" "}
+              <span className="text-accent">Nepal</span>
+            </motion.h1>
 
-          {/* Trust indicators */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1 }}
-            className="flex items-center gap-6 mt-12 text-sm text-gray-400"
-          >
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-400" />
-              Free Consultation
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-[15px] md:text-base text-ink-muted max-w-md mb-10 leading-[1.8]"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              The Visa Ghar helps Nepali students achieve their study abroad goals
+              through expert counselling, student recruitment, university
+              selection, application support, test preparation, and visa
+              guidance. We work with leading universities in Australia,
+              the UK, Canada, the USA, and New Zealand to help students
+              access world-class education. With over 10 years of
+              experience and a high visa success rate, The Visa Ghar
+              provides trusted support from course selection to
+              successful visa outcomes.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <Link
+                href="/book"
+                className="group inline-flex items-center gap-2 text-primary font-bold text-sm uppercase tracking-[0.15em] hover:text-accent-dark transition-all duration-300"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                GET FREE COUNSELLING
+                <span className="flex items-center justify-center w-7 h-7 bg-accent rounded-full text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                  <ArrowRight size={14} />
+                </span>
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Right Column — Student Image with Decorations */}
+          <div className="order-1 lg:order-2 relative flex items-center justify-center">
+            {/* Decorative circles */}
+            <div className="relative w-[320px] h-[320px] sm:w-[400px] sm:h-[400px] lg:w-[480px] lg:h-[480px] xl:w-[520px] xl:h-[520px]">
+              
+              {/* Outer dashed circle */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                className="absolute inset-0 rounded-full"
+                style={{
+                  border: '2px dashed rgba(14, 59, 46, 0.12)',
+                }}
+              />
+
+              {/* Middle dashed circle */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="absolute inset-[12%] rounded-full"
+                style={{
+                  border: '2px dashed rgba(225, 161, 6, 0.15)',
+                }}
+              />
+
+              {/* Inner solid circle (subtle) */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="absolute inset-[24%] rounded-full bg-primary-muted/20"
+                style={{
+                  border: '1px solid rgba(14, 59, 46, 0.06)',
+                }}
+              />
+
+              {/* Small decorative dots on circles */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                className="absolute top-[28%] left-[2%] w-3 h-3 bg-primary rounded-full"
+              />
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.1 }}
+                className="absolute bottom-[22%] left-[8%] w-3 h-3 bg-accent rounded-full"
+              />
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.2 }}
+                className="absolute top-[12%] right-[20%] w-2 h-2 bg-accent-light rounded-full"
+              />
+
+              {/* Student Image */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="absolute inset-0 flex items-end justify-center"
+              >
+                <div className="relative w-[75%] h-[85%]">
+                  <Image
+                    src="/images/hero-student.png"
+                    alt="Happy student giving thumbs up"
+                    fill
+                    className="object-contain object-bottom drop-shadow-2xl"
+                    priority
+                    sizes="(max-width: 768px) 280px, (max-width: 1024px) 360px, 440px"
+                  />
+                </div>
+              </motion.div>
+
+              {/* Floating Stat Badges */}
+              {statBadges.map((badge, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: badge.delay,
+                    type: "spring",
+                    stiffness: 200,
+                  }}
+                  className={`absolute ${badge.position} z-20`}
+                >
+                  <div
+                    className={`${badge.color} px-4 py-2 rounded-full text-xs font-bold shadow-lg whitespace-nowrap`}
+                    style={{
+                      boxShadow: '0 4px 20px rgba(14, 59, 46, 0.15)',
+                    }}
+                  >
+                    {badge.label}
+                  </div>
+                </motion.div>
+              ))}
             </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-400" />
-              98% Success Rate
-            </div>
-            <div className="hidden sm:flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-green-400" />
-              10+ Years Experience
-            </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* WhatsApp-style floating button hint */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 2, type: "spring" }}
+        className="absolute bottom-8 right-8 z-20 hidden lg:flex items-center gap-2"
       >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-1.5"
-        >
-          <div className="w-1.5 h-1.5 bg-gold rounded-full" />
-        </motion.div>
+        <span className="bg-success text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-success-light/10">
+          Talk with us!
+        </span>
       </motion.div>
     </section>
   );

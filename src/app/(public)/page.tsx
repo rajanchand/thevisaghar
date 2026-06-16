@@ -1,5 +1,6 @@
-export const dynamic = "force-dynamic";
+"use client";
 
+import React from "react";
 import Link from "next/link";
 import { ArrowRight, Award, Users, Clock, Globe2 } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -10,74 +11,21 @@ import { BlogCard } from "@/components/ui/BlogCard";
 import { HeroSection } from "@/components/home/HeroSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { CTASection } from "@/components/home/CTASection";
-import prisma from "@/lib/db";
-import {
-  MOCK_SERVICES,
-  MOCK_TESTIMONIALS,
-  MOCK_BLOG_POSTS,
-  MOCK_COUNTRIES,
-  type ServiceSummary,
-  type TestimonialSummary,
-  type BlogPostSummary,
-} from "@/lib/mock-data";
 
-export default async function HomePage() {
-  let services: ServiceSummary[] = [];
-  let testimonials: TestimonialSummary[] = [];
-  let blogPosts: BlogPostSummary[] = [];
+// Direct imports from data layer files
+import { countries } from "../../../data/countries";
+import { services } from "../../../data/services";
+import { testimonials } from "../../../data/testimonials";
+import { blogPosts } from "../../../data/blog-posts";
 
-  try {
-    const [dbServices, dbTestimonials, dbBlogPosts] = await Promise.all([
-      prisma.service.findMany({
-        where: { isActive: true },
-        orderBy: { order: "asc" },
-        take: 6,
-        select: { title: true, shortDescription: true, icon: true, slug: true, price: true, processingTime: true },
-      }),
-      prisma.testimonial.findMany({
-        where: { isApproved: true },
-        orderBy: { createdAt: "desc" },
-        take: 3,
-        select: { clientName: true, clientPhoto: true, visaType: true, rating: true, content: true },
-      }),
-      prisma.blogPost.findMany({
-        where: { published: true },
-        orderBy: { publishedAt: "desc" },
-        take: 3,
-        select: { title: true, slug: true, excerpt: true, featuredImage: true, category: true, publishedAt: true },
-      }),
-    ]);
-
-    // Handle database entries check
-    services = dbServices.length > 0 
-      ? dbServices.map(s => ({
-          title: s.title,
-          slug: s.slug,
-          shortDescription: s.shortDescription ?? "",
-          icon: s.icon,
-          price: s.price ?? "Contact Us",
-          processingTime: s.processingTime ?? "4-12 weeks",
-        })) 
-      : MOCK_SERVICES;
-
-    testimonials = dbTestimonials.length > 0 ? dbTestimonials : MOCK_TESTIMONIALS;
-
-    blogPosts = dbBlogPosts.length > 0 
-      ? dbBlogPosts.map(p => ({
-          title: p.title,
-          slug: p.slug,
-          excerpt: p.excerpt ?? "",
-          featuredImage: p.featuredImage,
-          category: p.category,
-          publishedAt: p.publishedAt ?? new Date(),
-        })) 
-      : MOCK_BLOG_POSTS;
-  } catch {
-    console.warn("Database offline during home page build, falling back to mock data.");
-    services = MOCK_SERVICES;
-    testimonials = MOCK_TESTIMONIALS;
-    blogPosts = MOCK_BLOG_POSTS;
-  }
+export default function HomePage() {
+  // Asymmetric grouping of destinations
+  const featuredCountries = countries.filter(
+    (c) => c.slug === "uk" || c.slug === "australia"
+  );
+  const secondaryCountries = countries.filter(
+    (c) => c.slug !== "uk" && c.slug !== "australia"
+  );
 
   return (
     <>
@@ -85,35 +33,31 @@ export default async function HomePage() {
       <HeroSection />
 
       {/* ─── Services ──────────────────────────────────────────────── */}
-      <section className="py-20 lg:py-28 bg-gray-50" id="services">
+      <section className="py-20 lg:py-28 bg-surface-sunken" id="services">
         <div className="section-container">
           <SectionHeading
             badge="Our Services"
-            title="Expert Visa Solutions for Every Need"
-            subtitle="From work permits to permanent residency, we provide comprehensive immigration services tailored to your goals."
+            title="Expert Guidance at Every Stage"
+            subtitle="From university admission support to English test preparation and visa processing — we cover it all."
           />
 
-          {services.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {services.map((service: ServiceSummary, index: number) => (
-                <ServiceCard
-                  key={service.slug}
-                  title={service.title}
-                  description={service.shortDescription ?? ""}
-                  icon={service.icon}
-                  slug={service.slug}
-                  index={index}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-12">Our services are coming soon. Please check back shortly.</p>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {services.map((service, index) => (
+              <ServiceCard
+                key={service.slug}
+                title={service.title}
+                description={service.shortDescription}
+                icon={service.icon}
+                slug={service.slug}
+                index={index}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ─── Countries Showcase ────────────────────────────────────────── */}
-      <section className="py-20 lg:py-28 bg-white" id="countries">
+      <section className="py-20 lg:py-28 bg-surface" id="countries">
         <div className="section-container">
           <SectionHeading
             badge="Study Abroad"
@@ -121,47 +65,142 @@ export default async function HomePage() {
             subtitle="We offer complete admission and student visa guidance for top global study destinations."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-12">
-            {MOCK_COUNTRIES.map((country) => (
+          {/* Featured Destinations (Asymmetric Grid) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            {featuredCountries.map((country) => (
               <div
-                key={country.name}
-                className="group relative bg-off-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 animate-fadeIn"
+                key={country.slug}
+                className="group relative bg-surface-raised rounded-3xl p-8 lg:p-10 border border-border-faint shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between"
               >
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="text-4xl" role="img" aria-label={`${country.name} flag`}>
-                    {country.flagUrl}
-                  </span>
-                  <div>
-                    <h3 className="text-xl font-bold text-navy group-hover:text-gold transition-colors">
-                      {country.name}
-                    </h3>
-                    <p className="text-gold text-xs font-semibold uppercase tracking-wider">
-                      {country.tagline}
-                    </p>
+                <div>
+                  <div className="flex items-center gap-3.5 mb-5">
+                    <span className="text-4xl" role="img" aria-label={`${country.name} flag`}>
+                      {country.flag}
+                    </span>
+                    <div>
+                      <h3
+                        className="text-2xl font-bold text-primary"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
+                        {country.name}
+                      </h3>
+                      <p className="text-accent text-xs font-semibold uppercase tracking-[0.12em]">
+                        {country.tagline}
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <p className="text-gray-500 text-sm leading-relaxed mb-6 line-clamp-3">
-                  {country.description}
-                </p>
-
-                <div className="space-y-3 pt-4 border-t border-gray-100 text-sm text-gray-600">
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-navy">Est. Cost:</span>
-                    <span>{country.costs}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-navy">Work Rights:</span>
-                    <span>{country.workPermit}</span>
-                  </div>
-                </div>
-
-                <div className="mt-6">
-                  <Link
-                    href={`/countries`}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-navy group-hover:text-gold transition-colors font-sans"
+                  <p
+                    className="text-ink-muted text-[14px] leading-relaxed mb-6"
+                    style={{ fontFamily: "var(--font-body)" }}
                   >
-                    Learn More <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    {country.description}
+                  </p>
+
+                  <div className="space-y-3 mb-8">
+                    <h4
+                      className="text-xs font-bold uppercase tracking-wider text-primary"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
+                      Why Study in {country.name}:
+                    </h4>
+                    <ul
+                      className="space-y-2 text-sm text-ink-light"
+                      style={{ fontFamily: "var(--font-body)" }}
+                    >
+                      {country.whyStudy.slice(0, 3).map((point, idx) => (
+                        <li key={idx} className="flex items-start gap-2.5">
+                          <span className="text-accent mt-0.5 font-bold">•</span>
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div>
+                  <div
+                    className="flex flex-wrap gap-x-8 gap-y-3 border-t border-border-faint pt-5 text-sm mb-6"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    <div>
+                      <span className="text-ink-faint block text-xs uppercase tracking-wider mb-0.5">
+                        Est. Tuition
+                      </span>
+                      <span className="font-semibold text-primary">
+                        {country.costSummary.split(" (")[0]}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-ink-faint block text-xs uppercase tracking-wider mb-0.5">
+                        Post-Study Work
+                      </span>
+                      <span className="font-semibold text-primary">
+                        {country.postStudyWork.split(" (")[0].split(" visa")[0]}
+                      </span>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/countries/${country.slug}`}
+                    className="inline-flex items-center gap-2 text-sm font-bold text-primary group-hover:text-accent-dark transition-colors"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    Explore Destination
+                    <ArrowRight
+                      size={14}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Secondary Destinations */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {secondaryCountries.map((country) => (
+              <div
+                key={country.slug}
+                className="group bg-surface-raised rounded-2xl p-6 border border-border-faint shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center gap-3 mb-3.5">
+                    <span className="text-3xl" role="img" aria-label={`${country.name} flag`}>
+                      {country.flag}
+                    </span>
+                    <div>
+                      <h4
+                        className="text-lg font-bold text-primary"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
+                        {country.name}
+                      </h4>
+                      <p
+                        className="text-accent text-[10px] font-semibold uppercase tracking-wider"
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {country.costSummary.split(" (")[0]}
+                      </p>
+                    </div>
+                  </div>
+                  <p
+                    className="text-ink-muted text-xs leading-relaxed mb-4 line-clamp-2"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    {country.description}
+                  </p>
+                </div>
+                <div className="border-t border-border-faint pt-4 mt-2">
+                  <Link
+                    href={`/countries/${country.slug}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-primary group-hover:text-accent-dark transition-colors"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    Learn More
+                    <ArrowRight
+                      size={12}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
                   </Link>
                 </div>
               </div>
@@ -171,23 +210,44 @@ export default async function HomePage() {
       </section>
 
       {/* ─── Stats / Why Choose Us ─────────────────────────────────── */}
-      <section className="py-20 lg:py-28 bg-gradient-navy relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
+      <section className="py-20 lg:py-28 bg-primary relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/images/hero-pattern.svg')] opacity-[0.02]" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-accent-muted rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent-muted rounded-full blur-3xl" />
 
         <div className="section-container relative z-10">
           <SectionHeading
             badge="Why Choose Us"
-            title="Trusted by Thousands of Nepali Clients"
-            subtitle="Our track record speaks for itself. Here's why clients choose The Visa Ghar."
+            title="Trusted by Thousands of Nepali Students"
+            subtitle="Our track record speaks for itself. Here is why students choose The Visa Ghar for their international education journey."
             light
           />
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
-            <AnimatedCounter end={98} suffix="%" label="Success Rate" icon={<Award className="w-8 h-8" />} />
-            <AnimatedCounter end={2000} suffix="+" label="Happy Clients" icon={<Users className="w-8 h-8" />} />
-            <AnimatedCounter end={10} suffix="+" label="Years Experience" icon={<Clock className="w-8 h-8" />} />
-            <AnimatedCounter end={15} suffix="+" label="Countries Covered" icon={<Globe2 className="w-8 h-8" />} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mt-16">
+            <AnimatedCounter
+              end={98}
+              suffix="%"
+              label="Success Rate"
+              icon={<Award className="w-8 h-8" />}
+            />
+            <AnimatedCounter
+              end={2000}
+              suffix="+"
+              label="Happy Students"
+              icon={<Users className="w-8 h-8" />}
+            />
+            <AnimatedCounter
+              end={10}
+              suffix="+"
+              label="Years Experience"
+              icon={<Clock className="w-8 h-8" />}
+            />
+            <AnimatedCounter
+              end={15}
+              suffix="+"
+              label="Countries Covered"
+              icon={<Globe2 className="w-8 h-8" />}
+            />
           </div>
         </div>
       </section>
@@ -196,49 +256,58 @@ export default async function HomePage() {
       <HowItWorksSection />
 
       {/* ─── Testimonials ──────────────────────────────────────────── */}
-      <section className="py-20 lg:py-28 bg-off-white" id="testimonials">
+      <section className="py-20 lg:py-28 bg-surface-sunken" id="testimonials">
         <div className="section-container">
           <SectionHeading
-            badge="Client Stories"
-            title="What Our Clients Say"
-            subtitle="Real stories from Nepali clients who achieved their visa goals with our help."
+            badge="Student Stories"
+            title="What Our Students Say"
+            subtitle="Real experiences from Nepali students who achieved their study abroad goals with The Visa Ghar."
           />
 
-          {testimonials.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {testimonials.map((testimonial: TestimonialSummary, index: number) => (
-                <TestimonialCard key={index} {...testimonial} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-12">Client testimonials coming soon.</p>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {testimonials.map((testimonial, index) => (
+              <TestimonialCard
+                key={index}
+                clientName={testimonial.clientName}
+                clientPhoto={testimonial.clientPhoto}
+                visaType={`${testimonial.country} ${testimonial.visaType}`}
+                rating={testimonial.rating}
+                content={testimonial.content}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ─── Latest Blog ───────────────────────────────────────────── */}
-      <section className="py-20 lg:py-28" id="blog">
+      <section className="py-20 lg:py-28 bg-surface" id="blog">
         <div className="section-container">
           <SectionHeading
-            badge="Latest News"
-            title="Immigration Insights & Updates"
-            subtitle="Stay informed with the latest visa news, tips, and guides from our expert team."
+            badge="Resources & News"
+            title="Latest Study Abroad Guides"
+            subtitle="Stay informed with expert advice, immigration updates, and preparation tips from our team."
           />
 
-          {blogPosts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {blogPosts.map((post: BlogPostSummary, index: number) => (
-                <BlogCard key={post.slug} {...post} index={index} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-12">Blog articles coming soon.</p>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            {blogPosts.map((post, index) => (
+              <BlogCard
+                key={post.slug}
+                title={post.title}
+                slug={post.slug}
+                excerpt={post.excerpt}
+                featuredImage={post.featuredImage}
+                category={post.category}
+                publishedAt={post.publishedAt}
+                index={index}
+              />
+            ))}
+          </div>
 
           <div className="text-center mt-12">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-navy hover:text-gold font-semibold transition-colors"
+              className="inline-flex items-center gap-2 text-primary hover:text-accent-dark font-semibold transition-colors"
+              style={{ fontFamily: "var(--font-body)" }}
             >
               View All Articles
               <ArrowRight size={18} />

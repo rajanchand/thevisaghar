@@ -51,21 +51,32 @@ export function HowItWorksSection() {
             >
               {/* Connector Line (desktop) */}
               {index < processSteps.length - 1 && (
-                <div className="hidden lg:block absolute top-10 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-gold/30 to-gold/10" />
+                <div className="hidden lg:block absolute top-10 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-accent/30 to-accent/10" />
               )}
 
               {/* Step Number + Icon */}
-              <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-navy/5 mb-6 group hover:bg-gold/10 transition-colors duration-300">
-                <div className="text-navy group-hover:text-gold transition-colors">
+              <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary-muted/60 mb-6 group hover:bg-accent-muted transition-colors duration-300">
+                <div className="text-primary group-hover:text-accent-dark transition-colors">
                   {step.icon}
                 </div>
-                <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-gold text-navy text-xs font-bold flex items-center justify-center shadow-gold">
+                <span
+                  className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-accent text-primary text-xs font-bold flex items-center justify-center border border-accent-light/25 shadow-accent"
+                  style={{ boxShadow: "var(--shadow-accent)" }}
+                >
                   {index + 1}
                 </span>
               </div>
 
-              <h3 className="text-navy font-bold text-lg mb-3">{step.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed max-w-xs mx-auto">
+              <h3
+                className="text-primary font-bold text-lg mb-3"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {step.title}
+              </h3>
+              <p
+                className="text-ink-muted text-sm leading-relaxed max-w-xs mx-auto"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
                 {step.description}
               </p>
             </motion.div>
@@ -81,7 +92,8 @@ export function HowItWorksSection() {
         >
           <Link
             href="/book"
-            className="inline-flex items-center gap-2 bg-navy hover:bg-navy-light text-white font-semibold text-base px-8 py-4 rounded-xl transition-all duration-200 hover:shadow-lg transform hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white font-semibold text-base px-8 py-4 rounded-xl transition-all duration-200 hover:shadow-lg transform hover:-translate-y-0.5"
+            style={{ fontFamily: "var(--font-body)" }}
           >
             Start Your Journey
             <ArrowRight size={18} />

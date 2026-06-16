@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { bookingSchema, type BookingFormData, VISA_TYPES } from "@/lib/validations";
 import { ArrowRight, ArrowLeft, Calendar, CheckCircle2, AlertCircle, Plane } from "lucide-react";
 
-const steps = ["Visa Type", "Personal Info", "Preferred Date", "Confirm"];
+const steps = ["Visa / Course Type", "Contact Info", "Preferred Date", "Confirm Details"];
 
 export default function BookPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -70,27 +70,32 @@ export default function BookPage() {
 
   if (submitStatus === "success") {
     return (
-      <section className="pt-32 pb-20">
-        <div className="section-container max-w-lg mx-auto text-center">
+      <section className="pt-32 pb-20 bg-surface">
+        <div className="section-container max-w-lg mx-auto text-center" style={{ fontFamily: "var(--font-body)" }}>
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            transition={{ type: "spring", stiffness: 180, damping: 20 }}
           >
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-10 h-10 text-green-500" />
+            <div className="w-20 h-20 bg-accent-muted rounded-full flex items-center justify-center mx-auto mb-6 border border-accent/20">
+              <CheckCircle2 className="w-10 h-10 text-accent-dark" />
             </div>
-            <h1 className="text-3xl font-bold text-navy mb-4">Booking Confirmed!</h1>
-            <p className="text-gray-500 mb-2">
-              Thank you, <strong>{watchedValues.name}</strong>. Your consultation for{" "}
-              <strong>{watchedValues.visaType}</strong> has been booked.
+            <h1
+              className="text-3xl font-bold text-primary mb-4"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Consultation Scheduled!
+            </h1>
+            <p className="text-ink-light mb-2">
+              Thank you, <strong>{watchedValues.name}</strong>. Your appointment for{" "}
+              <strong>{watchedValues.visaType}</strong> guidance has been requested.
             </p>
-            <p className="text-gray-500 mb-8">
-              We&apos;ll contact you at <strong>{watchedValues.email}</strong> to confirm the exact time.
+            <p className="text-ink-muted text-sm mb-8">
+              An advisor will contact you at <strong>{watchedValues.phone}</strong> or <strong>{watchedValues.email}</strong> shortly to confirm the exact time slot.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-navy text-white font-semibold px-8 py-3 rounded-xl hover:bg-navy-light transition-colors"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/95 text-white font-bold px-8 py-3.5 rounded-xl transition-colors text-xs uppercase tracking-wider shadow-sm"
             >
               Return to Home
             </Link>
@@ -102,75 +107,97 @@ export default function BookPage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="pt-32 pb-12 bg-gradient-navy">
-        <div className="section-container text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <Plane className="w-10 h-10 text-gold mx-auto mb-4" />
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">Book Free Consultation</h1>
-            <p className="text-gray-300 max-w-xl mx-auto">
-              Schedule a free consultation with our visa experts. We&apos;ll assess your eligibility and guide you through the process.
-            </p>
-          </motion.div>
+      {/* ─── Hero Section ───────────────────────────────────────────── */}
+      <section className="pt-32 pb-12 bg-primary text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/images/hero-pattern.svg')] opacity-[0.02]" />
+        <div className="section-container text-center relative z-10">
+          <Plane className="w-10 h-10 text-accent mx-auto mb-4" />
+          <h1
+            className="text-3xl md:text-4xl font-bold text-white mb-3 leading-tight"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Book a Free Consultation
+          </h1>
+          <p
+            className="text-white/80 max-w-xl mx-auto text-sm md:text-base leading-relaxed"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
+            Select your program interest, fill in your details, and reserve an in-person or online slot with our lead advisor.
+          </p>
         </div>
       </section>
 
-      {/* Multi-Step Form */}
-      <section className="py-16">
+      {/* ─── Multi-Step Funnel ──────────────────────────────────────── */}
+      <section className="py-16 bg-surface">
         <div className="section-container max-w-2xl mx-auto">
-          {/* Progress Steps */}
-          <div className="flex items-center justify-between mb-12">
+          {/* Progress Indicators */}
+          <div className="flex items-center justify-between mb-12" style={{ fontFamily: "var(--font-body)" }}>
             {steps.map((step, index) => (
               <React.Fragment key={step}>
                 <div className="flex flex-col items-center gap-2">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                    index <= currentStep
-                      ? "bg-navy text-white"
-                      : "bg-gray-100 text-gray-400"
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${
+                    index < currentStep
+                      ? "bg-primary border-primary text-accent"
+                      : index === currentStep
+                      ? "bg-accent border-accent text-primary shadow-sm"
+                      : "bg-surface-raised border-border text-ink-faint"
                   }`}>
                     {index < currentStep ? (
-                      <CheckCircle2 size={18} />
+                      <CheckCircle2 size={16} />
                     ) : (
                       index + 1
                     )}
                   </div>
-                  <span className={`text-xs font-medium hidden sm:block ${
-                    index <= currentStep ? "text-navy" : "text-gray-400"
+                  <span className={`text-[10px] font-bold uppercase tracking-wider hidden sm:block ${
+                    index <= currentStep ? "text-primary font-bold" : "text-ink-faint"
                   }`}>
                     {step}
                   </span>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`flex-1 h-[2px] mx-2 ${
-                    index < currentStep ? "bg-navy" : "bg-gray-200"
+                  <div className={`flex-1 h-[2px] mx-2 rounded-full transition-colors ${
+                    index < currentStep ? "bg-primary" : "bg-border"
                   }`} />
                 )}
               </React.Fragment>
             ))}
           </div>
 
-          {/* Form */}
+          {/* Form wrapper */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm min-h-[300px]">
+            <div
+              className="bg-surface-raised rounded-3xl p-8 border border-border-faint shadow-sm min-h-[340px] flex flex-col justify-between"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
               <AnimatePresence mode="wait">
-                {/* Step 1: Visa Type */}
+                {/* Step 1: Program Preference */}
                 {currentStep === 0 && (
                   <motion.div
                     key="step-0"
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 15 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
+                    exit={{ opacity: 0, x: -15 }}
+                    className="space-y-4"
                   >
-                    <h2 className="text-xl font-bold text-navy mb-2">What visa are you interested in?</h2>
-                    <p className="text-gray-500 text-sm mb-6">Select the type of visa you&apos;d like to discuss.</p>
+                    <div>
+                      <h2
+                        className="text-xl font-bold text-primary mb-1.5"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
+                        Which program are you applying for?
+                      </h2>
+                      <p className="text-ink-muted text-xs leading-relaxed mb-6">
+                        Select the class or study abroad destination you would like to discuss.
+                      </p>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {VISA_TYPES.map((type) => (
                         <label
                           key={type}
-                          className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                          className={`flex items-center gap-3.5 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                             watchedValues.visaType === type
-                              ? "border-gold bg-gold/5"
-                              : "border-gray-200 hover:border-gray-300"
+                              ? "border-accent bg-accent-muted/40"
+                              : "border-border hover:border-accent/30 bg-surface-raised"
                           }`}
                         >
                           <input
@@ -180,127 +207,179 @@ export default function BookPage() {
                             className="sr-only"
                           />
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                            watchedValues.visaType === type ? "border-gold" : "border-gray-300"
+                            watchedValues.visaType === type ? "border-accent" : "border-border"
                           }`}>
                             {watchedValues.visaType === type && (
-                              <div className="w-2.5 h-2.5 rounded-full bg-gold" />
+                              <div className="w-2.5 h-2.5 rounded-full bg-accent" />
                             )}
                           </div>
-                          <span className="text-sm font-medium text-gray-700">{type}</span>
+                          <span className="text-sm font-semibold text-ink-light">{type}</span>
                         </label>
                       ))}
                     </div>
-                    {errors.visaType && <p className="text-red-500 text-xs mt-3">{errors.visaType.message}</p>}
+                    {errors.visaType && <p className="text-red-500 text-xs mt-3 font-semibold">{errors.visaType.message}</p>}
                   </motion.div>
                 )}
 
-                {/* Step 2: Personal Info */}
+                {/* Step 2: Contact Information */}
                 {currentStep === 1 && (
                   <motion.div
                     key="step-1"
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 15 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
+                    exit={{ opacity: 0, x: -15 }}
                     className="space-y-5"
                   >
                     <div>
-                      <h2 className="text-xl font-bold text-navy mb-2">Tell us about yourself</h2>
-                      <p className="text-gray-500 text-sm mb-6">We need your details to schedule the consultation.</p>
+                      <h2
+                        className="text-xl font-bold text-primary mb-1.5"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
+                        Tell us about yourself
+                      </h2>
+                      <p className="text-ink-muted text-xs leading-relaxed mb-6">
+                        We need your primary details to reach you and register your booking slot.
+                      </p>
                     </div>
                     <div>
-                      <label htmlFor="book-name" className="block text-sm font-medium text-gray-700 mb-1.5">Full Name *</label>
-                      <input id="book-name" type="text" {...register("name")} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none text-sm" placeholder="Your full name" />
-                      {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+                      <label htmlFor="book-name" className="block text-xs font-bold uppercase tracking-wider text-ink-light mb-1.5">
+                        Full Name *
+                      </label>
+                      <input
+                        id="book-name"
+                        type="text"
+                        {...register("name")}
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-surface-sunken focus:bg-surface-raised focus:border-accent focus:ring-2 focus:ring-accent/25 outline-none text-sm font-semibold text-ink-light"
+                        placeholder="Your full name"
+                      />
+                      {errors.name && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.name.message}</p>}
                     </div>
                     <div>
-                      <label htmlFor="book-email" className="block text-sm font-medium text-gray-700 mb-1.5">Email Address *</label>
-                      <input id="book-email" type="email" {...register("email")} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none text-sm" placeholder="your@email.com" />
-                      {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                      <label htmlFor="book-email" className="block text-xs font-bold uppercase tracking-wider text-ink-light mb-1.5">
+                        Email Address *
+                      </label>
+                      <input
+                        id="book-email"
+                        type="email"
+                        {...register("email")}
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-surface-sunken focus:bg-surface-raised focus:border-accent focus:ring-2 focus:ring-accent/25 outline-none text-sm font-semibold text-ink-light"
+                        placeholder="your@email.com"
+                      />
+                      {errors.email && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.email.message}</p>}
                     </div>
                     <div>
-                      <label htmlFor="book-phone" className="block text-sm font-medium text-gray-700 mb-1.5">Phone Number *</label>
-                      <input id="book-phone" type="tel" {...register("phone")} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none text-sm" placeholder="+977-" />
-                      {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
+                      <label htmlFor="book-phone" className="block text-xs font-bold uppercase tracking-wider text-ink-light mb-1.5">
+                        Phone Number *
+                      </label>
+                      <input
+                        id="book-phone"
+                        type="tel"
+                        {...register("phone")}
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-surface-sunken focus:bg-surface-raised focus:border-accent focus:ring-2 focus:ring-accent/25 outline-none text-sm font-semibold text-ink-light"
+                        placeholder="+977-"
+                      />
+                      {errors.phone && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.phone.message}</p>}
                     </div>
                   </motion.div>
                 )}
 
-                {/* Step 3: Preferred Date */}
+                {/* Step 3: Calendar Date */}
                 {currentStep === 2 && (
                   <motion.div
                     key="step-2"
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 15 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
+                    exit={{ opacity: 0, x: -15 }}
                     className="space-y-5"
                   >
                     <div>
-                      <h2 className="text-xl font-bold text-navy mb-2">Choose your preferred date</h2>
-                      <p className="text-gray-500 text-sm mb-6">Select a date for your free consultation.</p>
+                      <h2
+                        className="text-xl font-bold text-primary mb-1.5"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
+                        Choose your preferred date
+                      </h2>
+                      <p className="text-ink-muted text-xs leading-relaxed mb-6">
+                        Select a date for your session (Sunday through Friday).
+                      </p>
                     </div>
                     <div>
-                      <label htmlFor="book-date" className="block text-sm font-medium text-gray-700 mb-1.5">Preferred Date *</label>
+                      <label htmlFor="book-date" className="block text-xs font-bold uppercase tracking-wider text-ink-light mb-1.5">
+                        Preferred Date *
+                      </label>
                       <div className="relative">
-                        <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-accent" />
                         <input
                           id="book-date"
                           type="date"
                           {...register("preferredDate")}
                           min={new Date().toISOString().split("T")[0]}
-                          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none text-sm"
+                          className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-surface-sunken focus:bg-surface-raised focus:border-accent focus:ring-2 focus:ring-accent/25 outline-none text-sm font-semibold text-ink-light"
                         />
                       </div>
-                      {errors.preferredDate && <p className="text-red-500 text-xs mt-1">{errors.preferredDate.message}</p>}
+                      {errors.preferredDate && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.preferredDate.message}</p>}
                     </div>
                     <div>
-                      <label htmlFor="book-message" className="block text-sm font-medium text-gray-700 mb-1.5">Additional Notes (optional)</label>
+                      <label htmlFor="book-message" className="block text-xs font-bold uppercase tracking-wider text-ink-light mb-1.5">
+                        Notes / Background (optional)
+                      </label>
                       <textarea
                         id="book-message"
                         {...register("message")}
                         rows={3}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none text-sm resize-none"
-                        placeholder="Any specific questions or requirements?"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-surface-sunken focus:bg-surface-raised focus:border-accent focus:ring-2 focus:ring-accent/25 outline-none text-sm font-semibold text-ink-light resize-none"
+                        placeholder="List your test scores (IELTS/PTE), plus-two academic marks, or specific questions..."
                       />
                     </div>
                   </motion.div>
                 )}
 
-                {/* Step 4: Confirm */}
+                {/* Step 4: Summary & Confirm */}
                 {currentStep === 3 && (
                   <motion.div
                     key="step-3"
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 15 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
+                    exit={{ opacity: 0, x: -15 }}
+                    className="space-y-4"
                   >
-                    <h2 className="text-xl font-bold text-navy mb-2">Review & Confirm</h2>
-                    <p className="text-gray-500 text-sm mb-6">Please verify your booking details below.</p>
+                    <div>
+                      <h2
+                        className="text-xl font-bold text-primary mb-1.5"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
+                        Review & Confirm Details
+                      </h2>
+                      <p className="text-ink-muted text-xs leading-relaxed mb-6">
+                        Please verify your consultation choices before submitting.
+                      </p>
+                    </div>
 
-                    <div className="space-y-4 bg-off-white rounded-xl p-6">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Visa Type</span>
-                        <span className="text-sm font-semibold text-navy">{watchedValues.visaType}</span>
+                    <div className="space-y-3.5 bg-surface-sunken border border-border rounded-2xl p-6 text-sm font-semibold text-ink-light">
+                      <div className="flex justify-between border-b border-border-faint pb-2">
+                        <span className="text-ink-faint">Visa / Class Category</span>
+                        <span className="text-primary">{watchedValues.visaType}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-border-faint pb-2">
+                        <span className="text-ink-faint">Full Name</span>
+                        <span className="text-primary">{watchedValues.name}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-border-faint pb-2">
+                        <span className="text-ink-faint">Email Address</span>
+                        <span className="text-primary">{watchedValues.email}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-border-faint pb-2">
+                        <span className="text-ink-faint">Phone Number</span>
+                        <span className="text-primary">{watchedValues.phone}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Name</span>
-                        <span className="text-sm font-semibold text-navy">{watchedValues.name}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Email</span>
-                        <span className="text-sm font-semibold text-navy">{watchedValues.email}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Phone</span>
-                        <span className="text-sm font-semibold text-navy">{watchedValues.phone}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Preferred Date</span>
-                        <span className="text-sm font-semibold text-navy">{watchedValues.preferredDate}</span>
+                        <span className="text-ink-faint">Requested Date</span>
+                        <span className="text-primary">{watchedValues.preferredDate}</span>
                       </div>
                     </div>
 
                     {submitStatus === "error" && (
-                      <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-lg text-sm mt-4">
+                      <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-xl text-sm font-semibold border border-red-150">
                         <AlertCircle size={16} />
                         {errorMessage}
                       </div>
@@ -310,39 +389,43 @@ export default function BookPage() {
               </AnimatePresence>
             </div>
 
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-6">
+            {/* Navigation buttons block */}
+            <div className="flex justify-between items-center mt-6" style={{ fontFamily: "var(--font-body)" }}>
               {currentStep > 0 ? (
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="flex items-center gap-2 px-6 py-3 text-gray-600 hover:text-navy font-medium transition-colors"
+                  className="flex items-center gap-2 px-6 py-3 text-ink-muted hover:text-primary font-bold text-xs uppercase tracking-wider transition-colors"
                 >
-                  <ArrowLeft size={16} /> Back
+                  <ArrowLeft size={14} /> Back
                 </button>
-              ) : <div />}
+              ) : (
+                <div />
+              )}
 
               {currentStep < steps.length - 1 ? (
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="flex items-center gap-2 bg-navy hover:bg-navy-light text-white font-semibold px-8 py-3 rounded-xl transition-all"
+                  className="flex items-center gap-2 bg-primary hover:bg-primary/95 text-white font-bold px-8 py-3 rounded-xl transition-all text-xs uppercase tracking-wider shadow-sm"
                 >
-                  Next <ArrowRight size={16} />
+                  Next <ArrowRight size={14} />
                 </button>
               ) : (
                 <button
                   type="submit"
                   disabled={submitStatus === "loading"}
-                  className="flex items-center gap-2 bg-gold hover:bg-gold-dark text-navy font-bold px-8 py-3 rounded-xl transition-all disabled:opacity-50"
+                  className="flex items-center gap-2 bg-accent hover:bg-accent-dark text-primary font-extrabold px-8 py-3.5 rounded-xl transition-all disabled:opacity-50 text-xs uppercase tracking-wider shadow-accent"
                 >
                   {submitStatus === "loading" ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-navy/30 border-t-navy rounded-full animate-spin" />
-                      Booking...
+                      <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                      Scheduling...
                     </>
                   ) : (
-                    <>Confirm Booking <CheckCircle2 size={16} /></>
+                    <>
+                      Confirm Booking <CheckCircle2 size={14} />
+                    </>
                   )}
                 </button>
               )}

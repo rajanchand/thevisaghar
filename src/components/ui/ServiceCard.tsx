@@ -38,25 +38,28 @@ export function ServiceCard({ title, description, icon, slug, index = 0 }: Servi
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <Link href={`/services/${slug}`} className="group block h-full">
-        <div className="relative h-full bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-          {/* Gradient accent line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-gold-light transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-
+        <div
+          className="relative h-full bg-surface-raised rounded-2xl p-8 border border-border-faint shadow-sm hover:shadow-md hover:border-accent transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
           {/* Icon */}
-          <div className="w-14 h-14 rounded-xl bg-navy/5 group-hover:bg-gold/10 flex items-center justify-center mb-5 transition-colors duration-300">
-            <Icon className="w-7 h-7 text-navy group-hover:text-gold transition-colors duration-300" />
+          <div className="w-14 h-14 rounded-xl bg-primary-muted group-hover:bg-accent-muted flex items-center justify-center mb-5 transition-colors duration-300">
+            <Icon className="w-7 h-7 text-primary group-hover:text-accent-dark transition-colors duration-300" />
           </div>
 
           {/* Content */}
-          <h3 className="text-lg font-bold text-navy mb-3 group-hover:text-gold-dark transition-colors">
+          <h3
+            className="text-lg font-bold text-primary mb-3 group-hover:text-accent-dark transition-colors"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
             {title}
           </h3>
-          <p className="text-gray-500 text-sm leading-relaxed mb-4">
+          <p className="text-ink-muted text-sm leading-relaxed mb-4">
             {description}
           </p>
 
           {/* Arrow */}
-          <div className="flex items-center gap-2 text-gold font-medium text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-8px] group-hover:translate-x-0">
+          <div className="flex items-center gap-2 text-accent-dark font-medium text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-8px] group-hover:translate-x-0">
             Learn More
             <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
           </div>

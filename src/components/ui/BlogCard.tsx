@@ -26,9 +26,12 @@ export function BlogCard({ title, slug, excerpt, featuredImage, category, publis
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <Link href={`/blog/${slug}`} className="group block h-full">
-        <article className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+        <article
+          className="bg-surface-raised rounded-2xl overflow-hidden border border-border-faint shadow-sm hover:shadow-md hover:border-accent transition-all duration-300 hover:-translate-y-1 h-full flex flex-col"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
           {/* Image */}
-          <div className="relative h-48 bg-gradient-to-br from-navy/10 to-navy/5 overflow-hidden">
+          <div className="relative h-48 bg-primary-muted overflow-hidden">
             {featuredImage ? (
               <Image
                 src={featuredImage}
@@ -39,12 +42,12 @@ export function BlogCard({ title, slug, excerpt, featuredImage, category, publis
                 unoptimized
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-navy to-navy-light flex items-center justify-center">
-                <span className="text-gold/40 text-6xl font-bold">{title.charAt(0)}</span>
+              <div className="w-full h-full bg-primary flex items-center justify-center">
+                <span className="text-accent-light/25 text-6xl font-bold font-serif">{title.charAt(0)}</span>
               </div>
             )}
             {/* Category Badge */}
-            <span className="absolute top-4 left-4 px-3 py-1 bg-gold text-navy text-xs font-semibold rounded-full">
+            <span className="absolute top-4 left-4 px-3 py-1 bg-accent text-primary text-xs font-bold rounded-full shadow-sm">
               {category}
             </span>
           </div>
@@ -53,23 +56,26 @@ export function BlogCard({ title, slug, excerpt, featuredImage, category, publis
           <div className="p-6 flex-1 flex flex-col">
             {/* Date */}
             {publishedAt && (
-              <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
+              <div className="flex items-center gap-2 text-ink-faint text-xs mb-3">
                 <Calendar size={14} />
                 {formatDate(publishedAt)}
               </div>
             )}
 
-            <h3 className="text-navy font-bold text-lg mb-3 group-hover:text-gold-dark transition-colors line-clamp-2">
+            <h3
+              className="text-primary font-bold text-lg mb-3 group-hover:text-accent-dark transition-colors line-clamp-2"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               {title}
             </h3>
 
             {excerpt && (
-              <p className="text-gray-500 text-sm leading-relaxed flex-1 mb-4">
+              <p className="text-ink-muted text-sm leading-relaxed flex-1 mb-4">
                 {truncate(excerpt, 120)}
               </p>
             )}
 
-            <div className="flex items-center gap-2 text-gold font-medium text-sm mt-auto">
+            <div className="flex items-center gap-2 text-accent-dark font-semibold text-sm mt-auto">
               Read More
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </div>

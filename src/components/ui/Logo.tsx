@@ -16,9 +16,9 @@ export function Logo({ variant = "default", size = "md", className = "" }: LogoP
   const s = sizes[size];
 
   const colors = {
-    default: { primary: "#C9A84C", secondary: "#0B1F4B", accent: "#C9A84C" },
-    white: { primary: "#FFFFFF", secondary: "#FFFFFF", accent: "#C9A84C" },
-    dark: { primary: "#0B1F4B", secondary: "#0B1F4B", accent: "#C9A84C" },
+    default: { primary: "#E1A106", secondary: "#0E3B2E", accent: "#E1A106" },
+    white:   { primary: "#FFFFFF", secondary: "#FFFFFF", accent: "#E1A106" },
+    dark:    { primary: "#0E3B2E", secondary: "#0E3B2E", accent: "#E1A106" },
   };
 
   const c = colors[variant];
@@ -66,7 +66,7 @@ export function Logo({ variant = "default", size = "md", className = "" }: LogoP
       <text
         x={s.stamp + 14}
         y={s.height / 2 - 3}
-        fontFamily="'Plus Jakarta Sans', sans-serif"
+        fontFamily="'Fraunces', Georgia, serif"
         fontWeight="800"
         fontSize={s.text}
         fill={c.primary}
@@ -79,14 +79,14 @@ export function Logo({ variant = "default", size = "md", className = "" }: LogoP
       <text
         x={s.stamp + 14}
         y={s.height / 2 + s.sub + 6}
-        fontFamily="'Inter', sans-serif"
-        fontWeight="400"
+        fontFamily="'Hanken Grotesk', system-ui, sans-serif"
+        fontWeight="500"
         fontSize={s.sub}
         fill={c.secondary}
-        opacity={0.7}
-        letterSpacing="0.08em"
+        opacity={0.6}
+        letterSpacing="0.1em"
       >
-        IMMIGRATION CONSULTANCY
+        STUDY ABROAD CONSULTANCY
       </text>
     </svg>
   );

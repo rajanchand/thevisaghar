@@ -21,23 +21,29 @@ export function SectionHeading({ badge, title, subtitle, align = "center", light
       className={`mb-12 ${align === "center" ? "text-center" : ""}`}
     >
       {badge && (
-        <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 ${
+        <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 border ${
           light
-            ? "bg-white/10 text-gold border border-white/20"
-            : "bg-gold/10 text-gold-dark border border-gold/20"
+            ? "bg-white/10 text-accent border-white/15"
+            : "bg-accent-muted text-accent-dark border-accent/20"
         }`}>
           {badge}
         </span>
       )}
-      <h2 className={`text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-tight ${
-        light ? "text-white" : "text-navy"
-      }`}>
+      <h2
+        className={`text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-tight ${
+          light ? "text-white" : "text-primary"
+        }`}
+        style={{ fontFamily: "var(--font-display)" }}
+      >
         {title}
       </h2>
       {subtitle && (
-        <p className={`mt-4 text-lg max-w-2xl ${align === "center" ? "mx-auto" : ""} ${
-          light ? "text-gray-300" : "text-gray-500"
-        }`}>
+        <p
+          className={`mt-4 text-lg max-w-2xl ${align === "center" ? "mx-auto" : ""} ${
+            light ? "text-white/70" : "text-ink-muted"
+          }`}
+          style={{ fontFamily: "var(--font-body)" }}
+        >
           {subtitle}
         </p>
       )}
