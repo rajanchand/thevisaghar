@@ -62,6 +62,7 @@ export default function AdminServices() {
   const [errorMsg, setErrorMsg] = useState("");
   const [saving, setSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [restorableService, setRestorableService] = useState<{ id: string; title: string } | null>(null);
 
   const fetchServices = async () => {
     try {
@@ -207,11 +208,31 @@ export default function AdminServices() {
     try {
       const res = await fetch(`/api/admin/services/${id}`, { method: "DELETE" });
       if (res.ok) {
+        const deleted = services.find((s) => s.id === id);
+        if (deleted) {
+          setRestorableService({ id: deleted.id, title: deleted.title });
+          // Auto clear after 5s
+          setTimeout(() => {
+            setRestorableService((curr) => (curr?.id === id ? null : curr));
+          }, 5000);
+        }
         setServices(services.filter((s) => s.id !== id));
         setIsDeleting(null);
       }
     } catch (error) {
       console.error("Failed to delete service:", error);
+    }
+  };
+
+  const handleRestore = async (id: string) => {
+    try {
+      const res = await fetch(`/api/admin/services/${id}/restore`, { method: "POST" });
+      if (res.ok) {
+        setRestorableService(null);
+        await fetchServices();
+      }
+    } catch (error) {
+      console.error("Failed to restore service:", error);
     }
   };
 
@@ -643,7 +664,7 @@ export default function AdminServices() {
               </div>
               <div>
                 <h4 className="text-lg font-bold text-navy">Delete Service?</h4>
-                <p className="text-gray-500 text-xs mt-1">This action cannot be undone. Are you sure you want to permanently delete this visa service category?</p>
+                <p className="text-gray-500 text-xs mt-1">Are you sure you want to delete this visa service category? You can undo this action within 5 seconds.</p>
               </div>
               <div className="flex items-center gap-3 pt-2">
                 <button
@@ -661,6 +682,37 @@ export default function AdminServices() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Undo/Restore Toast Banner */}
+      <AnimatePresence>
+        {restorableService && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-6 right-6 z-[70] bg-navy text-white px-5 py-4 rounded-2xl shadow-2xl border border-white/10 flex items-center justify-between gap-6 max-w-md w-full"
+          >
+            <div className="space-y-0.5">
+              <p className="text-xs text-white/50 font-bold uppercase tracking-wider">Service Deleted</p>
+              <p className="text-sm font-bold text-white leading-tight">Deleted &apos;{restorableService.title}&apos;</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => handleRestore(restorableService.id)}
+                className="bg-gold/15 text-gold hover:bg-gold/25 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+              >
+                Undo / Restore
+              </button>
+              <button
+                onClick={() => setRestorableService(null)}
+                className="p-1 hover:bg-white/10 rounded text-gray-400 hover:text-white transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

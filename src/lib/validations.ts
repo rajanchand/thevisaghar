@@ -124,3 +124,68 @@ export const VISA_TYPES = [
   "Computer Class",
   "Other",
 ] as const;
+
+// ─── Country ─────────────────────────────────────────────────────────────────
+
+export const countrySchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+  slug: z.string().min(2).max(100).regex(/^[a-z0-9-]+$/, "Slug may only contain lowercase letters, numbers, and hyphens"),
+  overview: z.string().min(10, "Overview must be at least 10 characters"),
+  costTableFields: z.array(z.object({
+    category: z.string(),
+    feeName: z.string(),
+    amount: z.string(),
+  })).default([]),
+  requirements: z.array(z.string()).default([]),
+  englishRequirements: z.array(z.string()).default([]),
+  intakes: z.array(z.string()).default([]),
+  scholarships: z.string().optional().nullable(),
+  workRights: z.string().optional().nullable(),
+  faqList: z.array(z.object({
+    q: z.string(),
+    a: z.string(),
+  })).default([]),
+  images: z.array(z.string()).default([]),
+  seoTitle: z.string().max(70).optional().nullable(),
+  seoDescription: z.string().max(320).optional().nullable(),
+  ogImage: z.string().optional().nullable(),
+  published: z.boolean().default(false),
+});
+
+export type CountryFormData = z.infer<typeof countrySchema>;
+
+// ─── Course ──────────────────────────────────────────────────────────────────
+
+export const courseSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters").max(200),
+  level: z.string().min(1, "Level is required").max(100),
+  schedule: z.string().min(1, "Schedule is required").max(100),
+  outcomes: z.array(z.string()).default([]),
+  published: z.boolean().default(false),
+});
+
+export type CourseFormData = z.infer<typeof courseSchema>;
+
+// ─── FAQ ─────────────────────────────────────────────────────────────────────
+
+export const faqSchema = z.object({
+  question: z.string().min(3, "Question must be at least 3 characters").max(500),
+  answer: z.string().min(5, "Answer must be at least 5 characters"),
+  group: z.string().min(1, "Group / category is required").max(100),
+  order: z.number().int().default(0),
+  published: z.boolean().default(false),
+});
+
+export type FAQFormData = z.infer<typeof faqSchema>;
+
+// ─── Intake ──────────────────────────────────────────────────────────────────
+
+export const intakeSchema = z.object({
+  country: z.string().min(1, "Country is required").max(100),
+  intakeMonth: z.string().min(1, "Intake Month is required").max(50),
+  intakeYear: z.number().int().min(2020).max(2100),
+  deadlineDate: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+export type IntakeFormData = z.infer<typeof intakeSchema>;

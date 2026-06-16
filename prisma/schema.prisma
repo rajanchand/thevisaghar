@@ -13,15 +13,18 @@ datasource db {
 // ─── Admin Users ──────────────────────────────────────────────────────────────
 
 model User {
-  id           String     @id @default(cuid())
-  email        String     @unique
-  passwordHash String
-  name         String
-  role         String     @default("ADMIN")
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  blogPosts    BlogPost[]
-  auditLogs    AuditLog[]
+  id            String     @id @default(cuid())
+  email         String     @unique
+  passwordHash  String
+  name          String
+  role          String     @default("ADMIN") // ADMIN, EDITOR, VIEWER
+  status        String     @default("ACTIVE") // ACTIVE, DEACTIVATED
+  lastLogin     DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  blogPosts     BlogPost[]
+  auditLogs     AuditLog[]
+  assignedLeads Inquiry[]  @relation("AssignedLeads")
 
   @@map("users")
 }
@@ -42,6 +45,8 @@ model Service {
   faq                Json?    @default("[]")
   order              Int      @default(0)
   isActive           Boolean  @default(true)
+  published          Boolean  @default(true)
+  isDeleted          Boolean  @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -63,27 +68,41 @@ model BlogPost {
   seoDescription String?
   ogImage        String?
   published      Boolean   @default(false)
+  status         String    @default("DRAFT") // DRAFT, PUBLISHED
   publishedAt    DateTime?
   authorId       String
   author         User      @relation(fields: [authorId], references: [id])
+  isDeleted      Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
   @@map("blog_posts")
 }
 
-// ─── Contact Inquiries ────────────────────────────────────────────────────────
+// ─── Contact Inquiries / Leads (mini-CRM) ────────────────────────────────────
 
 model Inquiry {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  phone     String?
-  visaType  String
-  message   String
-  isRead    Boolean  @default(false)
-  isReplied Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id           String    @id @default(cuid())
+  name         String
+  email        String
+  phone        String?
+  visaType     String
+  message      String
+  isRead       Boolean   @default(false)
+  isReplied    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+
+  // Lead CRM Extensions
+  status       String    @default("NEW") // NEW, CONTACTED, COUNSELLING_BOOKED, APPLIED, CLOSED_WON, CLOSED_LOST
+  source       String    @default("CONTACT_PAGE") // CONTACT_PAGE, INQUIRY_FORM, ELIGIBILITY_CHECK, COST_CALCULATOR
+  country      String?   // Target country of interest
+  assignedToId String?
+  assignedTo   User?     @relation("AssignedLeads", fields: [assignedToId], references: [id])
+  notes        Json      @default("[]") // Array of internal notes: [{ text: string, author: string, createdAt: string }]
+  academicInfo Json?     // GPA, degree level, gap years, language scores
+  costInfo     Json?     // Budget limit, dependent count, course level
+  isDeleted    Boolean   @default(false)
 
   @@map("inquiries")
 }
@@ -98,10 +117,11 @@ model Booking {
   visaType      String
   preferredDate DateTime
   message       String?
-  status        String   @default("PENDING")
+  status        String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED
   notes         String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  isDeleted     Boolean  @default(false)
 
   @@map("bookings")
 }
@@ -116,6 +136,12 @@ model Testimonial {
   rating      Int      @default(5)
   content     String
   isApproved  Boolean  @default(false)
+
+  // Success Story Extensions
+  country     String?
+  featured    Boolean  @default(false)
+  published   Boolean  @default(false)
+  isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -125,13 +151,16 @@ model Testimonial {
 // ─── Team Members ─────────────────────────────────────────────────────────────
 
 model TeamMember {
-  id       String  @id @default(cuid())
-  name     String
-  role     String
-  photo    String?
-  bio      String?
-  order    Int     @default(0)
-  isActive Boolean @default(true)
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  photo     String?
+  bio       String?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("team_members")
 }
@@ -145,6 +174,109 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 
   @@map("site_settings")
+}
+
+// ─── Countries (Rebrand Data Store) ──────────────────────────────────────────
+
+model Country {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  name                String
+  overview            String
+  costTableFields     Json     @default("[]")
+  requirements        Json     @default("[]")
+  englishRequirements Json     @default("[]")
+  intakes             Json     @default("[]")
+  scholarships        String?
+  workRights          String?
+  faqList             Json     @default("[]")
+  images              Json     @default("[]")
+  seoTitle            String?
+  seoDescription      String?
+  ogImage             String?
+  published           Boolean  @default(false)
+  isDeleted           Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("countries")
+}
+
+// ─── Courses (Test Preparation Management) ───────────────────────────────────
+
+model Course {
+  id        String   @id @default(cuid())
+  title     String
+  level     String
+  schedule  String
+  outcomes  Json     @default("[]")
+  published Boolean  @default(false)
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("courses")
+}
+
+// ─── Universities List ────────────────────────────────────────────────────────
+
+model University {
+  id        String   @id @default(cuid())
+  name      String
+  logo      String?
+  country   String
+  link      String?
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("universities")
+}
+
+// ─── Global FAQs ─────────────────────────────────────────────────────────────
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  group     String
+  order     Int      @default(0)
+  published Boolean  @default(false)
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+// ─── Intakes Schedule ─────────────────────────────────────────────────────────
+
+model Intake {
+  id           String    @id @default(cuid())
+  country      String
+  intakeMonth  String
+  intakeYear   Int
+  deadlineDate DateTime?
+  notes        String?
+  isDeleted    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("intakes")
+}
+
+// ─── Media Assets Library ─────────────────────────────────────────────────────
+
+model MediaAsset {
+  id         String   @id @default(cuid())
+  path       String
+  altText    String
+  type       String
+  size       Int
+  uploadedBy String?
+  createdAt  DateTime @default(now())
+
+  @@map("media_assets")
 }
 
 // ─── Audit Log ────────────────────────────────────────────────────────────────

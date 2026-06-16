@@ -125,13 +125,14 @@ export async function DELETE(
       return NextResponse.json({ error: "Service not found" }, { status: 404 });
     }
 
-    await prisma.service.delete({
+    await prisma.service.update({
       where: { id },
+      data: { isDeleted: true },
     });
 
     // Audit log
     await logAudit({
-      action: "DELETE",
+      action: "SOFT_DELETE",
       entity: "Service",
       entityId: id,
       userId: session.user.id,

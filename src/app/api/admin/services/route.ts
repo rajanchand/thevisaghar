@@ -18,6 +18,7 @@ export async function GET() {
     }
 
     const services = await prisma.service.findMany({
+      where: { isDeleted: false },
       orderBy: { order: "asc" },
     });
 

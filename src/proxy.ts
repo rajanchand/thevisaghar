@@ -23,7 +23,8 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
 
-      if (token.role !== "ADMIN") {
+      const hasAccess = ["ADMIN", "EDITOR", "VIEWER"].includes(token.role as string);
+      if (!hasAccess) {
         return NextResponse.redirect(new URL("/", request.url));
       }
     }
@@ -37,9 +38,10 @@ export async function proxy(request: NextRequest) {
         );
       }
 
-      if (token.role !== "ADMIN") {
+      const hasAccess = ["ADMIN", "EDITOR", "VIEWER"].includes(token.role as string);
+      if (!hasAccess) {
         return NextResponse.json(
-          { error: "Forbidden — admin access required" },
+          { error: "Forbidden — admin/editor/viewer access required" },
           { status: 403 }
         );
       }
@@ -63,8 +65,14 @@ export async function proxy(request: NextRequest) {
   // ─── Body Size Limit ────────────────────────────────────────────────────
   if (["POST", "PUT", "PATCH"].includes(request.method)) {
     const contentLength = request.headers.get("content-length");
-    if (contentLength && parseInt(contentLength, 10) > 1_048_576) {
-      return new NextResponse("Payload Too Large", { status: 413 });
+    if (contentLength && parseInt(contentLength, 10) > 1_048_576 && !pathname.startsWith("/api/admin/media")) {
+      // Allow media uploads up to 5MB, block other routes above 1MB
+      const maxMediaSize = 5 * 1024 * 1024;
+      if (pathname.startsWith("/api/admin/media") && parseInt(contentLength, 10) > maxMediaSize) {
+        return new NextResponse("Payload Too Large (max 5MB)", { status: 413 });
+      } else if (!pathname.startsWith("/api/admin/media")) {
+        return new NextResponse("Payload Too Large (max 1MB)", { status: 413 });
+      }
     }
   }
 

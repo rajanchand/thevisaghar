@@ -68,6 +68,8 @@ export default function AdminBlog() {
   const [errorMsg, setErrorMsg] = useState("");
   const [saving, setSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [isSlugChecking, setIsSlugChecking] = useState(false);
+  const [isSlugAvailable, setIsSlugAvailable] = useState(true);
 
   const fetchPosts = async () => {
     try {
@@ -87,6 +89,34 @@ export default function AdminBlog() {
   useEffect(() => {
     void (async () => { await fetchPosts(); })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!slug) {
+      setIsSlugAvailable(true);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        setIsSlugChecking(true);
+        const params = new URLSearchParams({ slug });
+        if (editingPost) {
+          params.append("excludeId", editingPost.id);
+        }
+        const res = await fetch(`/api/admin/blog/check-slug?${params.toString()}`);
+        if (res.ok) {
+          const data = await res.json();
+          setIsSlugAvailable(data.available);
+        }
+      } catch (err) {
+        console.error("Error checking slug availability:", err);
+      } finally {
+        setIsSlugChecking(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [slug, editingPost]);
 
   // Slug generator useEffect removed in favor of handleTitleChange during render / onChange to prevent cascading renders
 
@@ -438,9 +468,24 @@ export default function AdminBlog() {
                       required
                       placeholder="e.g. schengen-visa-guide"
                       value={slug}
-                      onChange={(e) => setSlug(e.target.value)}
+                      onChange={(e) => {
+                        setSlug(
+                          e.target.value
+                            .toLowerCase()
+                            .replace(/[^a-z0-9-]+/g, "-")
+                        );
+                      }}
                       className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-navy/20"
                     />
+                    {isSlugChecking && (
+                      <p className="text-[10px] text-gray-400">Verifying slug uniqueness...</p>
+                    )}
+                    {!isSlugChecking && !isSlugAvailable && (
+                      <p className="text-[10px] text-red-500 font-semibold">⚠️ This slug is already taken by another article.</p>
+                    )}
+                    {!isSlugChecking && isSlugAvailable && slug && (
+                      <p className="text-[10px] text-green-600 font-semibold">✓ Slug is available.</p>
+                    )}
                   </div>
                 </div>
 
@@ -558,7 +603,7 @@ export default function AdminBlog() {
                   </button>
                   <button
                     type="submit"
-                    disabled={saving}
+                    disabled={saving || isSlugChecking || !isSlugAvailable}
                     className="bg-navy hover:bg-navy/90 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50"
                   >
                     {saving ? "Publishing..." : editingPost ? "Save Changes" : "Publish Article"}

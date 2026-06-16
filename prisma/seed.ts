@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // ─── Admin User ──────────────────────────────────────────────────────────
+  // ─── Users & Roles ───────────────────────────────────────────────────────
   const adminPassword = process.env.ADMIN_SEED_PASSWORD || "Admin123!";
   if (!process.env.ADMIN_SEED_PASSWORD) {
     console.warn("⚠️  ADMIN_SEED_PASSWORD not set — using default. Change this in production!");
@@ -15,15 +15,42 @@ async function main() {
   const passwordHash = await bcrypt.hash(adminPassword, 12);
   const admin = await prisma.user.upsert({
     where: { email: "admin@thevisaghar.com" },
-    update: {},
+    update: { passwordHash },
     create: {
       email: "admin@thevisaghar.com",
       passwordHash,
-      name: "Admin",
+      name: "Admin User",
       role: "ADMIN",
+      status: "ACTIVE",
     },
   });
   console.log("✅ Admin user created:", admin.email);
+
+  const editor = await prisma.user.upsert({
+    where: { email: "editor@thevisaghar.com" },
+    update: { passwordHash },
+    create: {
+      email: "editor@thevisaghar.com",
+      passwordHash,
+      name: "Editor User",
+      role: "EDITOR",
+      status: "ACTIVE",
+    },
+  });
+  console.log("✅ Editor user created:", editor.email);
+
+  const viewer = await prisma.user.upsert({
+    where: { email: "viewer@thevisaghar.com" },
+    update: { passwordHash },
+    create: {
+      email: "viewer@thevisaghar.com",
+      passwordHash,
+      name: "Viewer User",
+      role: "VIEWER",
+      status: "ACTIVE",
+    },
+  });
+  console.log("✅ Viewer user created:", viewer.email);
 
   // ─── Services ────────────────────────────────────────────────────────────
   const services = [
@@ -275,6 +302,79 @@ async function main() {
     });
   }
   console.log(`✅ ${settings.length} site settings created`);
+
+  // ─── Countries ───────────────────────────────────────────────────────────
+  const countries = [
+    {
+      slug: "uk",
+      name: "United Kingdom",
+      overview: "The UK is one of the most popular study destinations for Nepali students, offering world-class universities and short, intensive master's programs.",
+      published: true,
+    },
+    {
+      slug: "australia",
+      name: "Australia",
+      overview: "Australia offers high-quality education, a vibrant student lifestyle, and excellent post-study work opportunities.",
+      published: true,
+    },
+  ];
+
+  for (const country of countries) {
+    await prisma.country.upsert({
+      where: { slug: country.slug },
+      update: country,
+      create: country,
+    });
+  }
+  console.log(`✅ ${countries.length} countries seeded`);
+
+  // ─── Courses ─────────────────────────────────────────────────────────────
+  const courses = [
+    {
+      title: "IELTS Preparation",
+      level: "Intermediate to Advanced",
+      schedule: "Morning & Evening Batches Available",
+      outcomes: ["Improve all 4 test bands", "Get Mock Test feedback", "Gain exam strategies"],
+      published: true,
+    },
+    {
+      title: "PTE Academic",
+      level: "All Levels",
+      schedule: "Mid-day & Evening Batches Available",
+      outcomes: ["Computer lab simulations", "Learn scoring algorithms", "Practice templates"],
+      published: true,
+    },
+  ];
+
+  await prisma.course.deleteMany({});
+  for (const course of courses) {
+    await prisma.course.create({ data: course });
+  }
+  console.log(`✅ ${courses.length} courses seeded`);
+
+  // ─── FAQs ────────────────────────────────────────────────────────────────
+  const faqs = [
+    {
+      question: "What is a No Objection Certificate (NOC)?",
+      answer: "A No Objection Certificate (NOC) is an official letter issued by the Ministry of Education (MoEST) in Nepal. It is legally required for Nepali students to pay tuition fees in foreign currency and get visa permission to study abroad.",
+      group: "General",
+      order: 1,
+      published: true,
+    },
+    {
+      question: "How long does the student visa process take?",
+      answer: "The visa processing time varies by destination: typically 3 to 6 weeks for the UK, 4 to 12 weeks for Australia, and 2 to 3 months for Canada.",
+      group: "Visa Application",
+      order: 2,
+      published: true,
+    },
+  ];
+
+  await prisma.fAQ.deleteMany({});
+  for (const faq of faqs) {
+    await prisma.fAQ.create({ data: faq });
+  }
+  console.log(`✅ ${faqs.length} FAQs seeded`);
 
   console.log("🎉 Seeding complete!");
   console.log("");

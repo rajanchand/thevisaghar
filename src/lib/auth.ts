@@ -46,6 +46,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid email or password");
         }
 
+        if (user.status === "DEACTIVATED") {
+          throw new Error("Your account has been deactivated");
+        }
+
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
           user.passwordHash
@@ -55,11 +59,19 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid email or password");
         }
 
+        // Update lastLogin timestamp asynchronously
+        prisma.user
+          .update({
+            where: { id: user.id },
+            data: { lastLogin: new Date() },
+          })
+          .catch((err) => console.error("[NextAuth] Failed to update lastLogin:", err));
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role as "ADMIN" | "EDITOR",
+          role: user.role as "ADMIN" | "EDITOR" | "VIEWER",
         };
       },
     }),
